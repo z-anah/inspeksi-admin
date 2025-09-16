@@ -44,7 +44,9 @@ declare module 'vue' {
     DropZone: typeof import('./src/@core/components/DropZone.vue')['default']
     EnableOneTimePasswordDialog: typeof import('./src/components/dialogs/EnableOneTimePasswordDialog.vue')['default']
     ErrorHeader: typeof import('./src/components/ErrorHeader.vue')['default']
+    HeroSection: typeof import('./src/components/hero-section.vue')['default']
     I18n: typeof import('./src/@core/components/I18n.vue')['default']
+    LatestArticlesSection: typeof import('./src/components/latest-articles-section.vue')['default']
     MoreBtn: typeof import('./src/@core/components/MoreBtn.vue')['default']
     Notifications: typeof import('./src/@core/components/Notifications.vue')['default']
     PaymentProvidersDialog: typeof import('./src/components/dialogs/PaymentProvidersDialog.vue')['default']
@@ -63,5 +65,6 @@ declare module 'vue' {
     TwoFactorAuthDialog: typeof import('./src/components/dialogs/TwoFactorAuthDialog.vue')['default']
     UserInfoEditDialog: typeof import('./src/components/dialogs/UserInfoEditDialog.vue')['default']
     UserUpgradePlanDialog: typeof import('./src/components/dialogs/UserUpgradePlanDialog.vue')['default']
+    WhyJoinSection: typeof import('./src/components/why-join-section.vue')['default']
   }
 }

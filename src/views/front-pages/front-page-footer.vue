@@ -1,12 +1,9 @@
 <script setup>
-import footerDarkBg from '@images/front-pages/backgrounds/footer-bg-dark.png'
-import footerLightBg from '@images/front-pages/backgrounds/footer-bg-light.png'
 import appleImg from '@images/front-pages/landing-page/apple-icon.png'
 import googlePlayImg from '@images/front-pages/landing-page/google-play-icon.png'
 import { VNodeRenderer } from '@layouts/components/VNodeRenderer'
 import { themeConfig } from '@themeConfig'
 
-const footerBg = useGenerateImageVariant(footerLightBg, footerDarkBg)
 
 const pagesList = [
 ]
@@ -17,162 +14,101 @@ const demoList = [
 
 <template>
   <div class="footer">
-    <div
-      class="footer-top pt-11"
-      :style="{ 'background-image': `url(${footerBg})` }"
-    >
-      <VContainer>
-        <VRow>
-          <!-- 👉 Footer  -->
-          <VCol
-            cols="12"
-            md="5"
-          >
-            <div
-              class="mb-4"
-              :class="$vuetify.display.smAndDown ? 'w-100' : 'w-75'"
-            >
-              <div class="app-logo mb-6">
-                <VNodeRenderer :nodes="themeConfig.app.logo" />
-                <h1 class="app-logo-title text-white">
-                  {{ themeConfig.app.title }}
-                </h1>
-              </div>
-
-              <div
-                class="mb-6"
-                :class="$vuetify.theme.current.dark ? 'text-body-1' : 'text-white-variant'"
-              >
-                Most Powerful & Comprehensive 🤩 Vuejs Admin Template with Elegant Material Design & Unique Layouts.
-              </div>
-              <VForm class="subscribe-form d-flex align-center">
-                <AppTextField
-                  label="Subscribe to newsletter"
-                  placeholder="john@email.com"
-                />
-                <VBtn class="align-self-end rounded-s-0">
-                  Subscribe
-                </VBtn>
-              </VForm>
+    <VContainer>
+      <VRow>
+        <!-- 👉 Footer  -->
+        <VCol cols="12" md="5">
+          <div class="mb-4" :class="$vuetify.display.smAndDown ? 'w-100' : 'w-75'">
+            <div class="app-logo mb-6">
+              <VNodeRenderer :nodes="themeConfig.app.logo" />
+              <h1 class="app-logo-title text-white">
+                {{ themeConfig.app.title }}
+              </h1>
             </div>
-          </VCol>
 
-          <!-- 👉 Demos -->
-          <VCol
-            md="2"
-            sm="4"
-            xs="6"
-          >
-            <div class="footer-links">
-              <h6 class="footer-title text-h6 mb-6">
-                Demos
-              </h6>
-              <ul style="list-style: none;">
-                <li
-                  v-for="(item, index) in demoList"
-                  :key="index"
-                  class="mb-4"
-                >
-                  <a
-                    :href="item.to"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    :class="$vuetify.theme.current.dark ? 'text-body-1' : 'text-white-variant'"
-                  >
-                    {{ item.title }}
-                  </a>
-                </li>
-              </ul>
+            <div class="mb-6" :class="[$vuetify.theme.current.dark ? 'text-body-1' : 'text-primary']">
+              Most Powerful & Comprehensive 🤩 Vuejs Admin Template with Elegant Material Design & Unique Layouts.
             </div>
-          </VCol>
+            <VForm class="subscribe-form d-flex align-center">
+              <AppTextField label="Subscribe to newsletter" placeholder="john@email.com" />
+              <VBtn class="align-self-end rounded-s-0">
+                Subscribe
+              </VBtn>
+            </VForm>
+          </div>
+        </VCol>
 
-          <!-- 👉 Pages  -->
-          <VCol
-            md="2"
-            sm="4"
-            xs="6"
-          >
-            <div class="footer-links">
-              <h6 class="footer-title text-h6 mb-6">
-                Pages
-              </h6>
-              <ul style="list-style: none;">
-                <li
-                  v-for="(item, index) in pagesList"
-                  :key="index"
-                  class="mb-4"
-                >
-                  <RouterLink
-                    :class="$vuetify.theme.current.dark ? 'text-body-1' : 'text-white-variant'"
-                    class="me-2"
-                    :to="item.to"
-                  >
-                    {{ item.name }}
-                  </RouterLink>
-                  <template v-if="item.isNew">
-                    <VChip
-                      color="primary"
-                      variant="elevated"
-                      label
-                      size="small"
-                    >
-                      New
-                    </VChip>
-                  </template>
-                </li>
-              </ul>
-            </div>
-          </VCol>
+        <!-- 👉 Demos -->
+        <VCol md="2" sm="4" xs="6">
+          <div class="footer-links">
+            <h6 class="footer-title text-h6 mb-6">
+              Demos
+            </h6>
+            <ul style="list-style: none;">
+              <li v-for="(item, index) in demoList" :key="index" class="mb-4">
+                <a :href="item.to" target="_blank" rel="noopener noreferrer"
+                  :class="$vuetify.theme.current.dark ? 'text-body-1' : 'text-white-variant'">
+                  {{ item.title }}
+                </a>
+              </li>
+            </ul>
+          </div>
+        </VCol>
 
-          <!-- 👉 Download App -->
-          <VCol
-            cols="12"
-            md="3"
-            sm="4"
-          >
+        <!-- 👉 Pages  -->
+        <VCol md="2" sm="4" xs="6">
+          <div class="footer-links">
+            <h6 class="footer-title text-h6 mb-6">
+              Pages
+            </h6>
+            <ul style="list-style: none;">
+              <li v-for="(item, index) in pagesList" :key="index" class="mb-4">
+                <RouterLink :class="$vuetify.theme.current.dark ? 'text-body-1' : 'text-white-variant'" class="me-2"
+                  :to="item.to">
+                  {{ item.name }}
+                </RouterLink>
+                <template v-if="item.isNew">
+                  <VChip color="primary" variant="elevated" label size="small">
+                    New
+                  </VChip>
+                </template>
+              </li>
+            </ul>
+          </div>
+        </VCol>
+
+        <!-- 👉 Download App -->
+        <VCol cols="12" md="3" sm="4">
+          <div>
+            <h6 class="footer-title text-h6 mb-6">
+              Download our app
+            </h6>
+
             <div>
-              <h6 class="footer-title text-h6 mb-6">
-                Download our app
-              </h6>
-
-              <div>
-                <VBtn
-                  v-for="(item, index) in [
-                    { image: appleImg, store: 'App Store' },
-                    { image: googlePlayImg, store: 'Google Play' },
-                  ]"
-                  :key="index"
-                  color="#282c3e"
-                  height="56"
-                  class="mb-4 d-block"
-                >
-                  <template #default>
-                    <div class="d-flex align-center gap-x-8 footer-logo-buttons">
-                      <VImg
-                        :src="item.image"
-                        height="34"
-                        width="34"
-                      />
-                      <div class="d-flex flex-column justify-content-start">
-                        <div :class="$vuetify.theme.current.dark ? 'text-body-2' : 'text-white-variant text-body-2'">
-                          Download on the
-                        </div>
-                        <h6
-                          class="text-h6 text-start"
-                          :class="$vuetify.theme.current.dark ? 'text-body-1' : 'footer-title'"
-                        >
-                          {{ item.store }}
-                        </h6>
+              <VBtn v-for="(item, index) in [
+                { image: appleImg, store: 'App Store' },
+                { image: googlePlayImg, store: 'Google Play' },
+              ]" :key="index" color="#282c3e" height="56" class="mb-4 d-block">
+                <template #default>
+                  <div class="d-flex align-center gap-x-8 footer-logo-buttons">
+                    <VImg :src="item.image" height="34" width="34" />
+                    <div class="d-flex flex-column justify-content-start">
+                      <div :class="$vuetify.theme.current.dark ? 'text-body-2' : 'text-white-variant text-body-2'">
+                        Download on the
                       </div>
+                      <h6 class="text-h6 text-start"
+                        :class="$vuetify.theme.current.dark ? 'text-body-1' : 'footer-title'">
+                        {{ item.store }}
+                      </h6>
                     </div>
-                  </template>
-                </VBtn>
-              </div>
+                  </div>
+                </template>
+              </VBtn>
             </div>
-          </VCol>
-        </VRow>
-      </VContainer>
-    </div>
+          </div>
+        </VCol>
+      </VRow>
+    </VContainer>
 
     <!-- 👉 Footer Line -->
     <div class="footer-line w-100">
@@ -182,35 +118,18 @@ const demoList = [
             &copy;
 
             {{ new Date().getFullYear() }}
-            <a
-              href="https://pixinvent.com/"
-              target="_blank"
-              rel="noopener noreferrer"
-              class="font-weight-bold ms-1 text-white"
-            >Pixinvent</a>,
-            Made With ❤️ for a better web.
+            Inspeksi
           </div>
 
           <div class="d-flex gap-x-6">
-            <template
-              v-for="(item, index) in [
-                { title: 'github', icon: 'tabler-brand-github-filled', href: 'https://github.com/pixinvent' },
-                { title: 'facebook', icon: 'tabler-brand-facebook-filled', href: 'https://www.facebook.com/pixinvents/' },
-                { title: 'twitter', icon: 'tabler-brand-twitter-filled', href: 'https://twitter.com/pixinvents' },
-                { title: 'google', icon: 'tabler-brand-youtube-filled', href: 'https://www.youtube.com/channel/UClOcB3o1goJ293ri_Hxpklg' },
-              ]"
-              :key="index"
-            >
-              <a
-                :href="item.href"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <VIcon
-                  :icon="item.icon"
-                  size="16"
-                  color="white"
-                />
+            <template v-for="(item, index) in [
+              { title: 'github', icon: 'tabler-brand-github-filled', href: 'https://github.com/pixinvent' },
+              { title: 'facebook', icon: 'tabler-brand-facebook-filled', href: 'https://www.facebook.com/pixinvents/' },
+              { title: 'twitter', icon: 'tabler-brand-twitter-filled', href: 'https://twitter.com/pixinvents' },
+              { title: 'google', icon: 'tabler-brand-youtube-filled', href: 'https://www.youtube.com/channel/UClOcB3o1goJ293ri_Hxpklg' },
+            ]" :key="index">
+              <a :href="item.href" target="_blank" rel="noopener noreferrer">
+                <VIcon :icon="item.icon" size="16" color="white" />
               </a>
             </template>
           </div>
@@ -232,6 +151,7 @@ const demoList = [
 }
 
 .footer-links {
+
   .text-white-variant,
   .text-body-1 {
     &:hover {
@@ -241,7 +161,7 @@ const demoList = [
 }
 
 .footer-line {
-  background: #282c3e;
+  background: #000;
 }
 </style>
 

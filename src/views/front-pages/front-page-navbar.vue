@@ -166,9 +166,6 @@ const isPageActive = computed(() => menuItems.some(item => item.navItems.some(li
             >
               <div class="app-logo">
                 <VNodeRenderer :nodes="themeConfig.app.logo" />
-                <h1 class="app-logo-title">
-                  {{ themeConfig.app.title }}
-                </h1>
               </div>
             </RouterLink>
           </VAppBarTitle>

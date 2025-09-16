@@ -1,41 +1,20 @@
 <script setup>
-import check from '@images/svg/Check.svg'
-import keyboard from '@images/svg/keyboard.svg'
-import laptop from '@images/svg/laptop.svg'
-import paper from '@images/svg/paper-send.svg'
-import rocket from '@images/svg/rocket.svg'
-import user from '@images/svg/user.svg'
-
+const sectionTitle = 'Mengapa Bergabung?'
 const featuresData = [
   {
-    title: 'Quality Code',
-    desc: 'Code structure that all developers will easily understand and fall in love with.',
-    icon: laptop,
+    icon: 'tabler-brand-wechat',
+    title: 'Komunitas Solid',
+    desc: 'Bersama anggota lain, Anda akan saling mendukung dalam gerakan antikorupsi.',
   },
   {
-    title: 'Continuous Updates',
-    desc: 'Free updates for the next 12 months, including new demos and features.',
-    icon: rocket,
+    icon: 'tabler-school',
+    title: 'Edukasi & Workshop',
+    desc: 'Ikuti pelatihan, seminar, dan diskusi untuk meningkatkan pengetahuan Anda.',
   },
   {
-    title: 'Starter Kit',
-    desc: 'Start your project quickly without having to remove unnecessary features.',
-    icon: paper,
-  },
-  {
-    title: 'API Ready',
-    desc: 'Just change the endpoint and see your own data loaded within seconds.',
-    icon: check,
-  },
-  {
-    title: 'Excellent Support',
-    desc: 'An easy-to-follow doc with lots of references and code examples.',
-    icon: user,
-  },
-  {
-    title: 'Well Documented',
-    desc: 'An easy-to-follow doc with lots of references and code examples.',
-    icon: keyboard,
+    icon: 'tabler-speakerphone',
+    title: 'Aksi Nyata',
+    desc: 'Terlibat langsung dalam aksi, program kerja, dan advokasi pengadaan bersih.',
   },
 ]
 </script>
@@ -50,19 +29,15 @@ const featuresData = [
           class="mb-4"
           size="small"
         >
-          Useful Features
+          {{ sectionTitle }}
         </VChip>
         <div class="d-flex text-h4 mb-1 align-center flex-wrap justify-center">
           <div class="position-relative me-2">
             <div class="section-title">
-              Everything you need
+              {{ sectionTitle }}
             </div>
           </div>
-          to start your next project
         </div>
-        <p class="text-body-1 mb-0">
-          Not just a set of tools, the package includes ready-to-deploy conceptual application.
-        </p>
       </div>
       <VRow>
         <VCol
