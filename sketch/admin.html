@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Admin Panel</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+</head>
+
+<body class="bg-white text-black">
+  <div id="adm" class="min-h-screen flex">
+    <aside class="w-56 border-r p-4 space-y-4">
+      <h1 class="font-bold text-lg">Admin</h1>
+      <nav class="flex flex-col gap-2 text-sm">
+        <a href="#" @click="pg='dash'" :class="pg==='dash'?'font-semibold underline':''">Dashboard</a>
+        <a href="#" @click="pg='art'" :class="pg==='art'?'font-semibold underline':''">Artikel</a>
+        <a href="#" @click="pg='inf'" :class="pg==='inf'?'font-semibold underline':''">Informasi</a>
+        <a href="#" @click="pg='prof'" :class="pg==='prof'?'font-semibold underline':''">Profil</a>
+        <a href="#" @click="pg='evt'" :class="pg==='evt'?'font-semibold underline':''">Kegiatan</a>
+        <a href="#" @click="pg='reg'" :class="pg==='reg'?'font-semibold underline':''">Pendaftar</a>
+      </nav>
+    </aside>
+
+    <main class="flex-1 p-6 space-y-8">
+      <section v-if="pg==='dash'">
+        <h2 class="text-xl font-bold mb-2">Ringkasan</h2>
+        <p>Artikel: {{art.length}}, Info: {{inf.length}}, Event: {{evt.length}}</p>
+      </section>
+
+      <section v-if="pg==='art'" class="space-y-4">
+        <h2 class="font-bold">Kelola Artikel</h2>
+        <form @submit.prevent="addArt" class="space-y-2">
+          <input v-model="nt" placeholder="Judul" class="border p-2 w-full rounded">
+          <textarea v-model="nc" placeholder="Konten" class="border p-2 w-full rounded"></textarea>
+          <button class="w-full border py-2 rounded font-semibold hover:bg-black hover:text-white">Tambah</button>
+        </form>
+        <ul class="space-y-2">
+          <li v-for="(a,i) in art" :key="a.id" class="flex justify-between border p-2 rounded">
+            <span>{{a.t}}</span>
+            <button @click="delArt(i)" class="text-xs border px-2 rounded">hapus</button>
+          </li>
+        </ul>
+      </section>
+
+      <section v-if="pg==='inf'" class="space-y-4">
+        <h2 class="font-bold">Kelola Informasi</h2>
+        <form @submit.prevent="addInf" class="space-y-2">
+          <input v-model="nj" placeholder="Judul" class="border p-2 w-full rounded">
+          <textarea v-model="nd" placeholder="Deskripsi" class="border p-2 w-full rounded"></textarea>
+          <button class="w-full border py-2 rounded font-semibold hover:bg-black hover:text-white">Tambah</button>
+        </form>
+        <ul class="space-y-2">
+          <li v-for="(i,x) in inf" :key="i.id" class="flex justify-between border p-2 rounded">
+            <span>{{i.j}}</span>
+            <button @click="delInf(x)" class="text-xs border px-2 rounded">hapus</button>
+          </li>
+        </ul>
+      </section>
+
+      <section v-if="pg==='prof'" class="space-y-2">
+        <h2 class="font-bold">Profil</h2>
+        <textarea v-model="prof" class="border p-2 w-full rounded h-32"></textarea>
+      </section>
+
+      <section v-if="pg==='evt'" class="space-y-4">
+        <h2 class="font-bold">Kelola Kegiatan</h2>
+        <form @submit.prevent="addEvt" class="space-y-2">
+          <input v-model="et" placeholder="Judul" class="border p-2 w-full rounded">
+          <input v-model="ed" type="date" class="border p-2 w-full rounded">
+          <button class="w-full border py-2 rounded font-semibold hover:bg-black hover:text-white">Tambah</button>
+        </form>
+        <ul class="space-y-2">
+          <li v-for="(e,y) in evt" :key="e.id" class="flex justify-between border p-2 rounded">
+            <span>{{e.t}} - {{e.dt}}</span>
+            <button @click="delEvt(y)" class="text-xs border px-2 rounded">hapus</button>
+          </li>
+        </ul>
+      </section>
+
+      <section v-if="pg==='reg'" class="space-y-2">
+        <h2 class="font-bold">Data Pendaftar</h2>
+        <ul class="space-y-1">
+          <li v-for="r in regis" :key="r.id" class="border p-2 rounded">{{r.n}} - {{r.e}}</li>
+        </ul>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const { createApp } = Vue
+    createApp({
+      data() {
+        return {
+          pg: 'dash',
+          art: [{ id: 1, t: 'Opini', c: 'Isi' }],
+          inf: [{ id: 1, j: 'Webinar', d: 'Info' }],
+          evt: [{ id: 1, t: 'Event', dt: '2025-10-01' }],
+          prof: 'Deskripsi',
+          regis: [{ id: 1, n: 'Budi', e: 'budi@mail.com' }],
+          nt: '', nc: '', nj: '', nd: '', et: '', ed: ''
+        }
+      },
+      methods: {
+        addArt() { this.art.push({ id: Date.now(), t: this.nt, c: this.nc }); this.nt = ''; this.nc = '' },
+        delArt(i) { this.art.splice(i, 1) },
+        addInf() { this.inf.push({ id: Date.now(), j: this.nj, d: this.nd }); this.nj = ''; this.nd = '' },
+        delInf(x) { this.inf.splice(x, 1) },
+        addEvt() { this.evt.push({ id: Date.now(), t: this.et, dt: this.ed }); this.et = ''; this.ed = '' },
+        delEvt(y) { this.evt.splice(y, 1) }
+      }
+    }).mount('#adm')
+  </script>
+</body>
+
+</html>
