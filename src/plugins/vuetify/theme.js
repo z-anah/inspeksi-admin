@@ -1,46 +1,46 @@
-export const staticPrimaryColor = '#7367F0'
-export const staticPrimaryDarkenColor = '#675DD8'
+export const staticPrimaryColor = '#000000' // Black for main text and primary content
+export const staticPrimaryDarkenColor = '#000000'
 export const themes = {
   light: {
     dark: false,
     colors: {
-      'primary': staticPrimaryColor,
-      'on-primary': '#fff',
-      'primary-darken-1': '#675DD8',
-      'secondary': '#808390',
-      'on-secondary': '#fff',
-      'secondary-darken-1': '#737682',
+      'primary': staticPrimaryColor, // Black
+      'on-primary': '#FFFFFF', // White text on black
+      'primary-darken-1': '#000000',
+      'secondary': '#808080', // Gray
+      'on-secondary': '#FFFFFF',
+      'secondary-darken-1': '#808080',
       'success': '#28C76F',
-      'on-success': '#fff',
+      'on-success': '#000000',
       'success-darken-1': '#24B364',
-      'info': '#00BAD1',
-      'on-info': '#fff',
-      'info-darken-1': '#00A7BC',
+      'info': '#808080', // Gray for info
+      'on-info': '#FFFFFF',
+      'info-darken-1': '#000000',
       'warning': '#FF9F43',
-      'on-warning': '#fff',
+      'on-warning': '#000000',
       'warning-darken-1': '#E68F3C',
       'error': '#FF4C51',
-      'on-error': '#fff',
+      'on-error': '#000000',
       'error-darken-1': '#E64449',
-      'background': '#F8F7FA',
-      'on-background': '#2F2B3D',
-      'surface': '#fff',
-      'on-surface': '#2F2B3D',
-      'grey-50': '#FAFAFA',
+      'background': '#FFFFFF', // Main background
+      'on-background': '#000000', // Main text
+      'surface': '#FFFFFF', // Card backgrounds
+      'on-surface': '#000000', // Main text on surface
+      'grey-50': '#FFFFFF',
       'grey-100': '#F5F5F5',
       'grey-200': '#EEEEEE',
       'grey-300': '#E0E0E0',
       'grey-400': '#BDBDBD',
-      'grey-500': '#9E9E9E',
+      'grey-500': '#808080', // Main gray
       'grey-600': '#757575',
       'grey-700': '#616161',
       'grey-800': '#424242',
-      'grey-900': '#212121',
-      'grey-light': '#FAFAFA',
-      'perfect-scrollbar-thumb': '#DBDADE',
-      'skin-bordered-background': '#fff',
-      'skin-bordered-surface': '#fff',
-      'expansion-panel-text-custom-bg': '#fafafa',
+      'grey-900': '#000000',
+      'grey-light': '#FFFFFF',
+      'perfect-scrollbar-thumb': '#808080', // Gray
+      'skin-bordered-background': '#FFFFFF',
+      'skin-bordered-surface': '#FFFFFF',
+      'expansion-panel-text-custom-bg': '#FFFFFF',
     },
     variables: {
       'code-color': '#d400ff',
@@ -77,42 +77,43 @@ export const themes = {
   dark: {
     dark: true,
     colors: {
-      'primary': staticPrimaryColor,
-      'on-primary': '#fff',
-      'primary-darken-1': '#675DD8',
-      'secondary': '#808390',
-      'on-secondary': '#fff',
-      'secondary-darken-1': '#737682',
+      'primary': staticPrimaryColor, // Black
+      'on-primary': '#FFFFFF',
+      'primary-darken-1': '#000000',
+      'secondary': '#808080', // Gray
+      'on-secondary': '#FFFFFF',
+      'secondary-darken-1': '#808080',
       'success': '#28C76F',
-      'on-success': '#fff',
+      'on-success': '#FFFFFF',
       'success-darken-1': '#24B364',
-      'info': '#00BAD1',
-      'on-info': '#fff',
-      'info-darken-1': '#00A7BC',
+      'info': '#808080', // Gray for info
+      'on-info': '#FFFFFF',
+      'info-darken-1': '#000000',
       'warning': '#FF9F43',
-      'on-warning': '#fff',
+      'on-warning': '#FFFFFF',
       'warning-darken-1': '#E68F3C',
       'error': '#FF4C51',
-      'on-error': '#fff',
+      'on-error': '#FFFFFF',
       'error-darken-1': '#E64449',
-      'background': '#25293C',
-      'on-background': '#E1DEF5',
-      'surface': '#2F3349',
-      'on-surface': '#E1DEF5',
-      'grey-50': '#26293A',
-      'grey-100': '#2F3349',
-      'grey-200': '#26293A',
-      'grey-300': '#4A5072',
-      'grey-400': '#5E6692',
-      'grey-500': '#7983BB',
-      'grey-600': '#AAB3DE',
-      'grey-700': '#B6BEE3',
-      'grey-800': '#CFD3EC',
-      'grey-900': '#E7E9F6',
-      'grey-light': '#353A52',
-      'perfect-scrollbar-thumb': '#4A5072',
-      'skin-bordered-background': '#2F3349',
-      'skin-bordered-surface': '#2F3349',
+      'background': '#000000', // Black background for dark mode
+      'on-background': '#FFFFFF', // White text
+      'surface': '#232323', // Slightly lighter than black for cards
+      'on-surface': '#FFFFFF',
+      'grey-50': '#232323',
+      'grey-100': '#2C2C2C',
+      'grey-200': '#363636',
+      'grey-300': '#404040',
+      'grey-400': '#4A4A4A',
+      'grey-500': '#808080',
+      'grey-600': '#A0A0A0',
+      'grey-700': '#B0B0B0',
+      'grey-800': '#C0C0C0',
+      'grey-900': '#FFFFFF',
+      'grey-light': '#232323',
+      'perfect-scrollbar-thumb': '#808080',
+      'skin-bordered-background': '#000000',
+      'skin-bordered-surface': '#232323',
+      'expansion-panel-text-custom-bg': '#232323',
     },
     variables: {
       'code-color': '#d400ff',
