@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Komunitas</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@700;900&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+
+<body class="bg-white text-black font-sans" style="font-family: 'Inter', sans-serif;">
+  <div id="app" class="min-h-screen flex flex-col">
+    <header class="border-b bg-white/90 backdrop-blur sticky top-0 z-10">
+      <div class="max-w-6xl mx-auto flex justify-between items-center p-4">
+        <img src="logo.png" alt="Logo Insan Pengadaan Antikorupsi" class="h-20 w-auto">
+        <nav class="flex gap-6 text-sm font-medium">
+          <a href="#" @click="pg='home'" :class="pg==='home'?'underline':''">Home</a>
+          <a href="#" @click="pg='art'" :class="pg==='art'?'underline':''">Artikel</a>
+          <a href="#" @click="pg='inf'" :class="pg==='inf'?'underline':''">Informasi</a>
+          <a href="#" @click="pg='prof'" :class="pg==='prof'?'underline':''">Profil</a>
+          <a href="#" @click="pg='evt'" :class="pg==='evt'?'underline':''">Kegiatan</a>
+          <a href="#" @click="pg='frm'" :class="pg==='frm'?'underline':''">Formulir</a>
+        </nav>
+        <a href="admin.html" class="flex items-center gap-1 px-3 py-1 border rounded text-xs">
+          <span class="material-icons text-sm">lock</span> Admin
+        </a>
+      </div>
+    </header>
+
+    <main>
+      <section v-if="pg==='home'" class="flex-1 max-w-6xl mx-auto p-8 space-y-12">
+        <div class="relative w-full h-64 overflow-hidden rounded">
+          <img src="https://inspeksiorg.wordpress.com/wp-content/uploads/2025/08/bpom-1.jpg?w=1024" class="w-full h-full object-cover grayscale" alt="">
+          <div class="absolute inset-0 bg-black/40 flex items-center justify-center">
+            <h2 class="text-3xl md:text-4xl font-bold text-white uppercase" style="font-family: 'Merriweather', serif;">
+              Komunitas Bersih & Transparan
+            </h2>
+          </div>
+        </div>
+        <div class="max-w-2xl mx-auto text-center space-y-2 mt-4">
+          <div class="bg-black text-white py-3 px-4 rounded-lg shadow font-bold text-lg md:text-xl tracking-wide" style="font-family: 'Merriweather', serif;">
+            Situs Resmi Insan Pengadaan Antikorupsi
+          </div>
+          <div class="bg-white text-black py-3 px-4 rounded-lg shadow font-medium text-base md:text-lg border border-black" style="font-family: 'Inter', sans-serif;">
+            Bersama, Kita Saling Mendukung dan Berani Melawan Korupsi demi Integritas Pengadaan yang Lebih Baik.
+          </div>
+        </div>
+        <div class="text-center space-y-4">
+          <p class="text-lg max-w-2xl mx-auto">{{prof.desc}}</p>
+        </div>
+        <div>
+          <h3 class="text-xl font-semibold mb-3">Artikel Terbaru</h3>
+          <div class="grid md:grid-cols-3 gap-6">
+            <div v-for="a in art" :key="a.id"
+              class="bg-white border rounded-xl shadow hover:bg-black hover:text-white transition flex flex-col overflow-hidden">
+              <a :href="'article.html?type='+a.tp" class="flex flex-col h-full">
+                <img src="https://inspeksiorg.wordpress.com/wp-content/uploads/2025/08/bpom-1.jpg?w=1024"
+                  class="w-full h-40 object-cover grayscale">
+                <div class="p-5 flex-1 flex flex-col justify-between">
+                  <div>
+                    <span class="inline-block px-2 py-1 mb-2 rounded text-xs font-semibold bg-black text-white"
+                      style="font-family: 'Inter', sans-serif;">{{a.tp.toUpperCase()}}</span>
+                    <h4 class="font-bold text-lg mb-1" style="font-family: 'Merriweather', serif;">{{a.t}}</h4>
+                    <p class="text-sm text-gray-600 group-hover:text-white" style="font-family: 'Inter', sans-serif;">{{a.c}}</p>
+                  </div>
+                  <div class="mt-4 flex items-center justify-between">
+                    <span class="text-xs text-gray-400 group-hover:text-white">Lihat Detail</span>
+                    <span class="material-icons text-base group-hover:text-white">arrow_forward</span>
+                  </div>
+                </div>
+              </a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Value Proposition Section -->
+        <section class="max-w-4xl mx-auto text-center py-12 space-y-6">
+          <h3 class="text-2xl font-bold mb-4" style="font-family: 'Merriweather', serif;">Mengapa Bergabung?</h3>
+          <div class="grid md:grid-cols-3 gap-8">
+            <div class="bg-white border rounded-xl shadow p-6 flex flex-col items-center">
+              <span class="material-icons text-4xl mb-2 text-black">groups</span>
+              <h4 class="font-semibold mb-2">Komunitas Solid</h4>
+              <p class="text-sm text-gray-700">Bersama anggota lain, Anda akan saling mendukung dalam gerakan antikorupsi.</p>
+            </div>
+            <div class="bg-white border rounded-xl shadow p-6 flex flex-col items-center">
+              <span class="material-icons text-4xl mb-2 text-black">school</span>
+              <h4 class="font-semibold mb-2">Edukasi & Workshop</h4>
+              <p class="text-sm text-gray-700">Ikuti pelatihan, seminar, dan diskusi untuk meningkatkan pengetahuan Anda.</p>
+            </div>
+            <div class="bg-white border rounded-xl shadow p-6 flex flex-col items-center">
+              <span class="material-icons text-4xl mb-2 text-black">campaign</span>
+              <h4 class="font-semibold mb-2">Aksi Nyata</h4>
+              <p class="text-sm text-gray-700">Terlibat langsung dalam aksi, program kerja, dan advokasi pengadaan bersih.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Call to Action Section -->
+        <section class="max-w-2xl mx-auto text-center py-10">
+          <h3 class="text-xl font-bold mb-4" style="font-family: 'Merriweather', serif;">Gabung Bersama Kami</h3>
+          <p class="mb-6 text-gray-700">Jadilah bagian dari perubahan. Daftarkan diri Anda sebagai anggota komunitas dan mulai berkontribusi untuk Indonesia yang lebih bersih dan transparan.</p>
+          <a href="#" @click="pg='frm'"
+             class="inline-block px-8 py-3 rounded-lg bg-black text-white font-semibold text-lg shadow hover:bg-gray-900 transition">
+            Daftar Sekarang
+          </a>
+        </section>
+
+        <!-- Testimonial Section -->
+        <section class="max-w-4xl mx-auto py-12">
+          <h3 class="text-2xl font-bold text-center mb-8" style="font-family: 'Merriweather', serif;">Testimoni Anggota</h3>
+          <div class="grid md:grid-cols-2 gap-8">
+            <div class="bg-white border rounded-xl shadow p-6">
+              <p class="italic text-gray-700 mb-3">"Saya merasa lebih percaya diri dan berani melawan korupsi setelah bergabung di komunitas ini."</p>
+              <div class="font-semibold text-black">- Rina, Jakarta</div>
+            </div>
+            <div class="bg-white border rounded-xl shadow p-6">
+              <p class="italic text-gray-700 mb-3">"Kegiatan edukasi dan aksi nyata sangat bermanfaat untuk masyarakat."</p>
+              <div class="font-semibold text-black">- Budi, Surabaya</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Partner/Logo Section -->
+        <section class="max-w-4xl mx-auto py-12 text-center">
+          <h3 class="text-xl font-bold mb-6" style="font-family: 'Merriweather', serif;">Didukung Oleh</h3>
+          <div class="flex flex-wrap justify-center items-center gap-8">
+            <img src="logo.png" alt="Logo Insan Pengadaan Antikorupsi" class="h-12 w-auto">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/6/6e/BPK_Logo.png" alt="Logo BPK" class="h-12 w-auto">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/9/9c/KPK_Logo.png" alt="Logo KPK" class="h-12 w-auto">
+            <!-- Add more partner logos as needed -->
+          </div>
+        </section>
+      </section>
+
+      <section v-if="pg==='art'" class="flex-1 max-w-6xl mx-auto p-8 space-y-12">
+        <h2 class="text-2xl font-bold text-center mb-6" style="font-family: 'Merriweather', serif;">Artikel</h2>
+        <div class="grid md:grid-cols-2 gap-6">
+          <div v-for="a in art" :key="a.id"
+            class="border rounded overflow-hidden hover:bg-black hover:text-white transition">
+            <a :href="'article.html?type='+a.tp">
+              <img src="https://inspeksiorg.wordpress.com/wp-content/uploads/2025/08/bpom-1.jpg?w=1024" class="w-full h-40 object-cover grayscale">
+              <div class="p-6">
+                <h3 class="font-bold mb-2">{{a.t}}</h3>
+                <p class="text-sm">{{a.c}}</p>
+              </div>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <section v-if="pg==='inf'" class="flex-1 max-w-6xl mx-auto p-8 space-y-12">
+        <h2 class="text-2xl font-bold text-center mb-6" style="font-family: 'Merriweather', serif;">Informasi</h2>
+        <div class="grid md:grid-cols-2 gap-6">
+          <div v-for="i in inf" :key="i.id"
+            class="border rounded overflow-hidden hover:bg-black hover:text-white transition cursor-pointer"
+            @click="showInfo(i)">
+            <img src="https://inspeksiorg.wordpress.com/wp-content/uploads/2025/08/bpom-1.jpg?w=1024"
+              class="w-full h-40 object-cover grayscale">
+            <div class="p-6">
+              <p class="font-bold">{{i.j}}</p>
+              <p class="text-sm">{{i.d}}</p>
+            </div>
+          </div>
+        </div>
+        <!-- Modal -->
+        <div v-if="modalInfo" class="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+          <div class="bg-white rounded-xl max-w-md w-full p-6 relative shadow-lg">
+            <button @click="modalInfo=null" class="absolute top-2 right-2 text-gray-500 hover:text-black text-xl">&times;</button>
+            <img src="https://inspeksiorg.wordpress.com/wp-content/uploads/2025/08/bpom-1.jpg?w=1024" class="w-full h-40 object-cover rounded mb-4">
+            <h3 class="text-xl font-bold mb-2">{{modalInfo.j}}</h3>
+            <p class="mb-2 text-gray-700">{{modalInfo.d}}</p>
+            <p class="mb-2 text-sm text-gray-600">{{modalInfo.desc}}</p>
+            <div v-if="modalInfo.contact" class="mt-2 text-sm">
+              <span class="font-semibold">Kontak:</span> {{modalInfo.contact}}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section v-if="pg==='prof'" class="text-center space-y-6">
+        <h2 class="text-3xl font-extrabold text-center mb-8 tracking-tight text-black" style="font-family: 'Merriweather', serif;">Profil Komunitas</h2>
+        <img src="https://inspeksiorg.wordpress.com/wp-content/uploads/2025/08/bpom-1.jpg?w=1024"
+          class="w-full h-64 object-cover grayscale rounded-xl shadow-lg mb-6">
+        <p class="text-lg mb-8 text-gray-700" style="font-family: 'Inter', sans-serif;">{{prof.desc}}</p>
+
+        <!-- Visi Section -->
+        <section class="bg-white rounded-xl shadow-lg p-8 mb-8 border border-black">
+          <h3 class="text-2xl font-bold mb-4 text-black" style="font-family: 'Merriweather', serif;">Visi</h3>
+          <p class="text-lg text-black" style="font-family: 'Inter', sans-serif;">{{prof.visi}}</p>
+        </section>
+
+        <!-- Misi Section -->
+        <section class="bg-white rounded-xl shadow-lg p-8 mb-8 border border-black">
+          <h3 class="text-2xl font-bold mb-4 text-black" style="font-family: 'Merriweather', serif;">Misi</h3>
+          <ul class="list-disc ml-6 text-black space-y-2 text-lg" style="font-family: 'Inter', sans-serif;">
+            <li v-for="m in prof.misi" :key="m">{{m}}</li>
+          </ul>
+        </section>
+
+        <!-- Program Kerja Section -->
+        <section class="bg-white rounded-xl shadow-lg p-8 mb-8 border border-black">
+          <h3 class="text-2xl font-bold mb-4 text-black" style="font-family: 'Merriweather', serif;">Program Kerja</h3>
+          <ul class="list-disc ml-6 text-black space-y-2 text-lg" style="font-family: 'Inter', sans-serif;">
+            <li v-for="p in prof.program" :key="p">{{p}}</li>
+          </ul>
+        </section>
+
+        <!-- Susunan Pengurus Section - Professional Card Grid -->
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mt-8">
+          <h4 class="font-semibold text-2xl mb-8 text-left md:text-center" style="font-family: 'Merriweather', serif;">
+            Susunan Pengurus
+          </h4>
+          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-8">
+            <div v-for="peng in prof.pengurus" :key="peng"
+              class="bg-white border border-gray-200 rounded-2xl shadow-lg flex flex-col items-center p-8 hover:shadow-xl transition">
+              <div class="mb-4">
+                <img
+                  class="object-center object-cover rounded-full h-24 w-24 border-4 border-gray-200 bg-gray-100"
+                  :src="'https://api.dicebear.com/7.x/initials/svg?seed=' + encodeURIComponent(peng.split(':')[1])"
+                  :alt="peng.split(':')[1]"
+                >
+              </div>
+              <div class="text-center">
+                <div class="text-lg font-bold text-gray-900 mb-1" style="font-family: 'Merriweather', serif;">
+                  {{peng.split(':')[1]}}
+                </div>
+                <div class="text-sm text-gray-500 font-medium" style="font-family: 'Inter', sans-serif;">
+                  {{peng.split(':')[0]}}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section v-if="pg==='evt'" class="flex-1 max-w-6xl mx-auto p-8 space-y-12">
+        <h2 class="text-2xl font-bold text-center mb-6" style="font-family: 'Merriweather', serif;">Kegiatan</h2>
+        <div class="grid lg:grid-cols-2 gap-10">
+          <div class="border rounded-xl p-6 shadow min-w-[500px]">
+            <div class="flex items-center justify-between mb-4">
+              <button @click="pm" class="px-3 py-1 border rounded hover:bg-black hover:text-white">‹</button>
+              <p class="font-semibold text-lg">
+                {{ new Date(calY,calM).toLocaleString('id-ID',{month:'long',year:'numeric'}) }}
+              </p>
+              <button @click="nmth" class="px-3 py-1 border rounded hover:bg-black hover:text-white">›</button>
+            </div>
+            <table class="w-full text-center border-collapse">
+              <thead>
+                <tr>
+                  <th v-for="d in ['Sen','Sel','Rab','Kam','Jum','Sab','Min']" :key="d" class="border py-2 font-medium">
+                    {{d}}
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="(w,wi) in genCal" :key="wi">
+                  <td v-for="(d,di) in w" :key="di"
+                    class="border h-20 align-top relative cursor-pointer hover:bg-gray-100" @click="selDay(d.num)">
+                    <div v-if="d.num" class="p-1 text-sm flex flex-col items-center">
+                      <span class="font-medium">{{d.num}}</span>
+                      <span v-if="d.ev" class="mt-1 w-2 h-2 bg-black rounded-full"></span>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="space-y-4 min-w-[500px]">
+            <h3 class="text-xl font-semibold">Daftar Kegiatan</h3>
+            <div v-for="e in evt" :key="e.id" :class="['border rounded-lg p-5 flex flex-col gap-2 transition',
+                   selEvtIds.includes(e.id) ? 'bg-black text-white' : 'hover:bg-black hover:text-white']">
+              <div class="flex items-center justify-between">
+                <p class="font-semibold">{{e.t}}</p>
+                <span class="text-sm">
+                  {{ new Date(e.dt).toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric'}) }}
+                </span>
+              </div>
+              <p class="text-xs">{{e.lc}}</p>
+              <a v-if="e.map" :href="e.map" target="_blank"
+                 class="inline-block mt-1 px-3 py-1 text-xs rounded border border-black bg-white text-black hover:bg-black hover:text-white transition">
+                Lihat Lokasi
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section v-if="pg==='frm'" class="max-w-lg mx-auto border rounded-xl p-8 space-y-6 bg-white shadow">
+        <h2 class="text-2xl font-bold text-center mb-6" style="font-family: 'Merriweather', serif;">Formulir</h2>
+        <p class="text-center text-gray-600 mb-6">
+          Silakan pilih formulir yang sesuai untuk kebutuhan Anda. Semua data akan diproses secara aman dan profesional
+          oleh tim kami.
+        </p>
+        <div class="space-y-4">
+          <div class="border rounded-lg p-5 flex items-center gap-4 hover:bg-black hover:text-white transition">
+            <span class="material-icons text-3xl">person_add</span>
+            <div class="flex-1">
+              <a href="https://forms.gle/example1" target="_blank" class="font-semibold text-lg underline">Formulir
+                Pendaftaran Anggota</a>
+              <p class="text-sm mt-1 text-gray-500 group-hover:text-white">Daftar sebagai anggota komunitas Bersih &
+                Transparan.</p>
+            </div>
+          </div>
+          <div class="border rounded-lg p-5 flex items-center gap-4 hover:bg-black hover:text-white transition">
+            <span class="material-icons text-3xl">feedback</span>
+            <div class="flex-1">
+              <a href="https://forms.gle/example2" target="_blank" class="font-semibold text-lg underline">Formulir
+                Saran & Masukan</a>
+              <p class="text-sm mt-1 text-gray-500 group-hover:text-white">Berikan saran, kritik, atau masukan untuk
+                pengembangan komunitas.</p>
+            </div>
+          </div>
+          <div class="border rounded-lg p-5 flex items-center gap-4 hover:bg-black hover:text-white transition">
+            <span class="material-icons text-3xl">event</span>
+            <div class="flex-1">
+              <a href="https://forms.gle/example3" target="_blank" class="font-semibold text-lg underline">Formulir
+                Pendaftaran Kegiatan</a>
+              <p class="text-sm mt-1 text-gray-500 group-hover:text-white">Registrasi untuk mengikuti atau
+                menyelenggarakan kegiatan komunitas.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="bg-black text-white lg:grid lg:grid-cols-5">
+      <div class="relative block h-32 lg:col-span-2 lg:h-full">
+        <img
+          src="https://images.unsplash.com/photo-1642370324100-324b21fab3a9?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1548&q=80"
+          alt=""
+          class="absolute inset-0 h-full w-full object-cover"
+        />
+        <div class="absolute inset-0 bg-black/60"></div>
+      </div>
+
+      <div class="px-4 py-16 sm:px-6 lg:col-span-3 lg:px-8">
+        <div class="grid grid-cols-1 gap-8 sm:grid-cols-2">
+          <div>
+            <p>
+              <span class="text-xs tracking-wide text-gray-300 uppercase"> Call us </span>
+              <a href="tel:081234567890" class="block text-2xl font-medium text-white hover:opacity-75 sm:text-3xl">
+                0812-3456-7890
+              </a>
+            </p>
+            <ul class="mt-8 space-y-1 text-sm text-gray-300">
+              <li>Senin - Jumat: 10.00 - 17.00</li>
+              <li>Sabtu - Minggu: 10.00 - 15.00</li>
+            </ul>
+            <ul class="mt-8 flex gap-6"><li>
+              <a href="#" rel="noreferrer" target="_blank" class="text-gray-300 transition hover:opacity-75">
+                <span class="sr-only">Phone</span>
+                <i class="material-icons text-2xl">phone</i>
+              </a>
+            </li><li>
+              <a href="#" rel="noreferrer" target="_blank" class="text-gray-300 transition hover:opacity-75">
+                <span class="sr-only">Email</span>
+                <i class="material-icons text-2xl">email</i>
+              </a>
+            </li>
+            </ul>
+          </div>
+          <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div>
+              <p class="font-medium text-white">Tentang Kami</p>
+              <ul class="mt-6 space-y-4 text-sm">
+                <li><a href="#" class="text-gray-300 transition hover:opacity-75"> Home </a></li>
+                <li><a href="#" class="text-gray-300 transition hover:opacity-75"> Profil </a></li>
+                <li><a href="#" class="text-gray-300 transition hover:opacity-75"> Kegiatan </a></li>
+              </ul>
+            </div>
+            <div>
+              <p class="font-medium text-white">Informasi</p>
+              <ul class="mt-6 space-y-4 text-sm">
+                <li><a href="#" class="text-gray-300 transition hover:opacity-75"> Artikel </a></li>
+                <li><a href="#" class="text-gray-300 transition hover:opacity-75"> Informasi </a></li>
+                <li><a href="#" class="text-gray-300 transition hover:opacity-75"> Formulir </a></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="mt-12 border-t border-gray-700 pt-12">
+          <div class="sm:flex sm:items-center sm:justify-between">
+            <ul class="flex flex-wrap gap-4 text-xs">
+            </ul>
+            <p class="mt-8 text-xs text-gray-400 sm:mt-0">
+              &copy; 2025 Bersih & Transparan
+            </p>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    const { createApp } = Vue
+    createApp({
+      data() {
+        return {
+          pg: 'home',
+          art: [
+            { id: 1, tp: 'opini', t: 'Opini: Integritas', c: 'Pentingnya kejujuran', img: 'https://source.unsplash.com/600x400/?integrity,truth' },
+            { id: 2, tp: 'kisah', t: 'Kisah Inspiratif', c: 'Integritas membawa keberkahan', img: 'https://source.unsplash.com/600x400/?inspiration,hope' },
+            { id: 3, tp: 'rilis', t: 'Rilis Resmi', c: 'Peluncuran portal baru', img: 'https://source.unsplash.com/600x400/?news,press' }
+          ],
+          inf: [
+            {
+              id: 1,
+              j: 'Diskusi Publik',
+              d: 'Aula Kota 25 Sept',
+              desc: 'Diskusi terbuka mengenai isu transparansi dan keadilan di masyarakat.',
+              contact: '0812-3456-7890',
+              img: 'https://source.unsplash.com/600x400/?public,discussion'
+            },
+            {
+              id: 2,
+              j: 'Workshop Etika',
+              d: 'Online 30 Sept',
+              desc: 'Pelatihan etika untuk anggota komunitas dan masyarakat umum.',
+              contact: 'workshop@komunitas.id',
+              img: 'https://source.unsplash.com/600x400/?workshop,ethics'
+            },
+            {
+              id: 3,
+              j: 'Seminar Akuntabilitas',
+              d: 'Gedung Serbaguna 5 Okt',
+              desc: 'Seminar tentang pentingnya akuntabilitas dalam organisasi.',
+              contact: 'seminar@komunitas.id',
+              img: 'https://source.unsplash.com/600x400/?seminar,accountability'
+            }
+          ],
+          evt: [
+            { id: 1, t: 'Aksi Bersih', dt: '2025-10-01', lc: 'Lapangan Utama', map: 'https://goo.gl/maps/abc123' },
+            { id: 2, t: 'Seminar Transparansi', dt: '2025-10-15', lc: 'Aula Gedung Kota', map: 'https://goo.gl/maps/def456' },
+            { id: 3, t: 'Diskusi Integritas', dt: '2025-10-15', lc: 'Ruang Meeting Gedung A', map: 'https://goo.gl/maps/ghi789' },
+            { id: 4, t: 'Forum Akuntabilitas', dt: '2025-10-20', lc: 'Online Zoom', map: '' }
+          ],
+          prof: {
+            desc: 'Kami komunitas yang mendorong keadilan, transparansi, dan akuntabilitas di masyarakat.',
+            visi: 'Mewujudkan masyarakat yang bersih, adil, dan transparan.',
+            misi: [
+              'Meningkatkan kesadaran akan pentingnya integritas.',
+              'Mendorong partisipasi aktif masyarakat dalam pengawasan.',
+              'Memberikan edukasi tentang transparansi dan akuntabilitas.'
+            ],
+            program: [
+              'Aksi Bersih Lingkungan',
+              'Workshop Etika & Integritas',
+              'Forum Diskusi Publik',
+              'Seminar Akuntabilitas'
+            ],
+            pengurus: [
+              'Ketua: Andi Wijaya',
+              'Wakil Ketua: Siti Rahma',
+              'Sekretaris: Budi Santoso',
+              'Bendahara: Lina Marlina',
+              'Koordinator Program: Rina Putri'
+            ]
+          },
+          nm: '', em: '',
+          calY: null, calM: null,
+          calM: null,
+          selEvtIds: [],
+          modalInfo: null,
+        }
+      },
+      computed: {
+        genCal() {
+          const y = this.calY, m = this.calM
+          if (y === null || m === null) return []
+          const fd = new Date(y, m, 1).getDay()
+          const sd = (fd + 6) % 7
+          const nd = new Date(y, m + 1, 0).getDate()
+          const emap = {}
+          this.evt.forEach(e => {
+            const [yy, mm, dd] = e.dt.split('-').map(n => parseInt(n, 10))
+            if (yy === y && mm - 1 === m) emap[dd] = true
+          })
+          const days = []
+          for (let i = 0; i < sd; i++) days.push({ num: null, ev: false })
+          for (let d = 1; d <= nd; d++) days.push({ num: d, ev: emap[d] || false })
+          while (days.length % 7 !== 0) days.push({ num: null, ev: false })
+          const w = []
+          for (let i = 0; i < days.length; i += 7) w.push(days.slice(i, i + 7))
+          return w
+        }
+      },
+      methods: {
+        reg() { alert(`Terdaftar: ${this.nm} - ${this.em}`); this.nm = ''; this.em = '' },
+        pm() { if (this.calM === 0) { this.calM = 11; this.calY-- } else this.calM-- },
+        nmth() { if (this.calM === 11) { this.calM = 0; this.calY++ } else this.calM++ },
+        selDay(d) {
+          if (!d) { this.selEvtIds = []; return }
+          const match = this.evt.filter(e => {
+            const [yy, mm, dd] = e.dt.split('-').map(n => parseInt(n, 10))
+            return yy === this.calY && mm - 1 === this.calM && dd === d
+          }).map(e => e.id)
+          this.selEvtIds = match
+        },
+        showInfo(i) { this.modalInfo = i },
+      },
+      mounted() {
+        if (this.evt.length) {
+          const p = this.evt[0].dt.split('-')
+          if (p.length >= 3) { this.calY = parseInt(p[0], 10); this.calM = parseInt(p[1], 10) - 1 }
+          else { const d = new Date(); this.calY = d.getFullYear(); this.calM = d.getMonth() }
+        } else { const d = new Date(); this.calY = d.getFullYear(); this.calM = d.getMonth() }
+        const d = new Date()
+        this.calY = d.getFullYear()
+        this.calM = d.getMonth()
+      }
+    }).mount('#app')
+  </script>
+
+</body>
+
+</html>
