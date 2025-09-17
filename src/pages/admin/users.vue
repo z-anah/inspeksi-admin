@@ -8,96 +8,113 @@ definePage({
   },
 })
 
+const users = ref([])
 const loading = ref(false)
 const errorMsg = ref('')
-const partnerList = ref([])
+const infoMsg = ref('')
 const dialog = ref(false)
 const deleteDialog = ref(false)
 const isEdit = ref(false)
 const form = reactive({
   id: null,
-  name: '',
-  logo_url: '',
+  username: '',
+  password: '',
 })
 const deleteId = ref(null)
+const name = ref("")
 
-const fetchPartners = async () => {
+// Fetch users
+const fetchUsers = async () => {
+  name.value = localStorage.getItem('user_name');
   loading.value = true
   errorMsg.value = ''
   const { data, error } = await supabase
-    .from('partners')
-    .select('*')
+    .from('users')
+    .select('id, username, password, created_at')
     .order('created_at', { ascending: false })
   if (error) errorMsg.value = error.message
-  else partnerList.value = data
+  else users.value = data
   loading.value = false
 }
 
+// Open dialog for add/edit
 const openCreate = () => {
   isEdit.value = false
-  Object.assign(form, { id: null, name: '', logo_url: '' })
+  Object.assign(form, { id: null, username: '', password: 'pass1234' })
   dialog.value = true
+  errorMsg.value = ''
+  infoMsg.value = 'Default password will be "pass1234"'
 }
 
-const openEdit = (row) => {
+const openEdit = (user) => {
   isEdit.value = true
-  Object.assign(form, row)
+  Object.assign(form, user)
   dialog.value = true
+  errorMsg.value = ''
+  infoMsg.value = ''
 }
 
-const savePartner = async () => {
-  if (!form.name || !form.logo_url) {
-    errorMsg.value = 'Name and Logo URL are required'
+// Add or update user
+const saveUser = async () => {
+  errorMsg.value = ''
+  infoMsg.value = ''
+  if (!form.username) {
+    errorMsg.value = 'Username is required'
     return
   }
   loading.value = true
-  errorMsg.value = ''
   let result
   if (isEdit.value) {
-    result = await supabase
-      .from('partners')
-      .update({
-        name: form.name,
-        logo_url: form.logo_url,
-      })
-      .eq('id', form.id)
-      .select()
+    if (form.username === localStorage.getItem('user_name')) {
+      result = await supabase
+        .from('users')
+        .update({
+          password: form.password,
+        })
+        .eq('id', form.id)
+        .select()
+    } else {
+      loading.value = false
+      dialog.value = false
+      return
+    }
   } else {
     result = await supabase
-      .from('partners')
+      .from('users')
       .insert([{
-        name: form.name,
-        logo_url: form.logo_url,
+        username: form.username,
+        password: 'pass1234',
       }])
       .select()
+    if (!result.error) {
+      infoMsg.value = 'User created with default password "pass1234".'
+    }
   }
-  if (result.error) errorMsg.value = result.error.message
+  if (result && result.error) errorMsg.value = result.error.message
   else {
     dialog.value = false
-    fetchPartners()
+    fetchUsers()
   }
   loading.value = false
 }
 
+// Delete user
 const openDelete = (id) => {
   deleteId.value = id
   deleteDialog.value = true
 }
 
-const deletePartner = async () => {
+const deleteUser = async () => {
   loading.value = true
   errorMsg.value = ''
-  const { error } = await supabase
-    .from('partners')
-    .delete()
-    .eq('id', deleteId.value)
+  const { error } = await supabase.from('users').delete().eq('id', deleteId.value)
   if (error) errorMsg.value = error.message
   deleteDialog.value = false
-  fetchPartners()
+  fetchUsers()
   loading.value = false
 }
 
-onMounted(fetchPartners)
+onMounted(fetchUsers)
 </script>
 
 <template>
@@ -106,13 +123,13 @@ onMounted(fetchPartners)
       <VCard flat
         class="py-6 px-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4 shadow-none border-b border-gray-200">
         <div>
-          <h2 class="text-2xl font-bold mb-1">Partners Management</h2>
+          <h2 class="text-2xl font-bold mb-1">Users Management</h2>
           <p class="text-gray-500 text-base">
-            Manage all partners and their logos displayed on your website.
+            Manage all users for your website.
           </p>
         </div>
         <VBtn color="primary" class="mt-4 md:mt-0" @click="openCreate" size="large" prepend-icon="tabler-plus">
-          Add Partner
+          Add User
         </VBtn>
       </VCard>
     </div>
@@ -120,21 +137,25 @@ onMounted(fetchPartners)
     <VAlert v-if="errorMsg" type="error" class="mb-4">
       {{ errorMsg }}
     </VAlert>
+    <VAlert v-if="infoMsg" type="info" class="mb-4">
+      {{ infoMsg }}
+    </VAlert>
 
-    <VDataTable :items="partnerList" :loading="loading" class="rounded-lg shadow" :headers="[
-      { title: 'Name', key: 'name' },
-      { title: 'Logo', key: 'logo_url' },
-      { title: 'Created', key: 'created_at' },
+    <VDataTable :items="users" :loading="loading" class="rounded-lg shadow" :headers="[
+      { title: 'Username', key: 'username' },
+      { title: 'Password', key: 'password' },
+      { title: 'Created At', key: 'created_at' },
       { title: 'Actions', key: 'actions', sortable: false },
     ]" item-value="id" density="comfortable">
-      <template #item.logo_url="{ item }">
-        <img :src="item.logo_url" alt="logo" class="h-10 max-w-[100px] object-contain" />
+      <template #item.password="{ item }">
+        <span v-if="item.username === name">{{ item.password }}</span>
+        <span v-else class="text-gray-400">••••••••</span>
       </template>
       <template #item.created_at="{ item }">
         <span class="text-xs text-gray-500">{{ new Date(item.created_at).toLocaleString() }}</span>
       </template>
       <template #item.actions="{ item }">
-        <VBtn icon variant="text" color="primary" @click="openEdit(item)">
+        <VBtn icon variant="text" color="primary" @click="openEdit(item)" :disabled="item.username !== name">
           <VIcon icon="tabler-edit" />
         </VBtn>
         <VBtn icon variant="text" color="error" @click="openDelete(item.id)">
@@ -147,21 +168,23 @@ onMounted(fetchPartners)
     </VDataTable>
 
     <!-- Create/Edit Dialog -->
-    <VDialog v-model="dialog" max-width="500">
+    <VDialog v-model="dialog" max-width="400">
       <VCard>
         <VCardTitle>
-          {{ isEdit ? 'Edit Partner' : 'Add Partner' }}
+          {{ isEdit ? 'Edit User' : 'Add User' }}
         </VCardTitle>
         <VCardText>
-          <VForm @submit.prevent="savePartner">
-            <VTextField v-model="form.name" label="Name" required class="mb-4" />
-            <VTextField v-model="form.logo_url" label="Logo URL" required class="mb-4" />
+          <VForm @submit.prevent="saveUser">
+            <VTextField v-model="form.username" label="Username" required class="mb-4" :disabled="isEdit" />
+            <VTextField v-if="!isEdit || form.username === name" v-model="form.password" label="Password" type="text"
+              required class="mb-4" :readonly="!isEdit" />
+            <VAlert v-if="infoMsg && !isEdit" type="info" class="mb-2">{{ infoMsg }}</VAlert>
           </VForm>
         </VCardText>
         <VCardActions>
           <VSpacer />
           <VBtn text @click="dialog = false">Cancel</VBtn>
-          <VBtn color="primary" :loading="loading" @click="savePartner">
+          <VBtn color="primary" :loading="loading" @click="saveUser" :disabled="isEdit && form.username !== name">
             Save
           </VBtn>
         </VCardActions>
@@ -171,14 +194,14 @@ onMounted(fetchPartners)
     <!-- Delete Confirmation Dialog -->
     <VDialog v-model="deleteDialog" max-width="400">
       <VCard>
-        <VCardTitle>Delete Partner?</VCardTitle>
+        <VCardTitle>Delete User?</VCardTitle>
         <VCardText>
-          Are you sure you want to delete this partner?
+          Are you sure you want to delete this user?
         </VCardText>
         <VCardActions>
           <VSpacer />
           <VBtn text @click="deleteDialog = false">Cancel</VBtn>
-          <VBtn color="error" :loading="loading" @click="deletePartner">
+          <VBtn color="error" :loading="loading" @click="deleteUser">
             Delete
           </VBtn>
         </VCardActions>

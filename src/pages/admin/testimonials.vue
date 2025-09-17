@@ -2,6 +2,12 @@
 import { supabase } from '@/libs/supabase'
 import { onMounted, reactive, ref } from 'vue'
 
+definePage({
+  meta: {
+    public: false,
+  },
+})
+
 const loading = ref(false)
 const errorMsg = ref('')
 const testimonialList = ref([])

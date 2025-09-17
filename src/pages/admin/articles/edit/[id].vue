@@ -3,6 +3,12 @@ import { supabase } from '@/libs/supabase'
 import { onMounted, reactive, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 
+definePage({
+  meta: {
+    public: false,
+  },
+})
+
 const route = useRoute()
 const router = useRouter()
 const loading = ref(false)

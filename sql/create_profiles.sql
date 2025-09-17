@@ -12,7 +12,7 @@ definePage({
 })
 
 const form = ref({
-  username: '',
+  email: '',
   password: '',
   remember: false,
 })
@@ -27,31 +27,18 @@ const login = async () => {
   errorMsg.value = ''
   loading.value = true
   try {
-    // Query the users table directly for test-only authentication
-    const { data, error } = await supabase
-      .from('users')
-      .select('id, username, password')
-      .eq('username', form.value.username)
-      .single()
-
-    if (error || !data) {
-      errorMsg.value = 'Invalid username or password.'
+    const { error } = await supabase.auth.signInWithPassword({
+      email: form.value.email,
+      password: form.value.password,
+    })
+    if (error) {
+      errorMsg.value = error.message
       loading.value = false
       return
     }
-
-    // Simple plaintext password check (test only, do NOT use in production)
-    if (form.value.password !== data.password) {
-      errorMsg.value = 'Invalid username or password.'
-      loading.value = false
-      return
-    }
-
     localStorage.setItem('is_signed', 'true')
-    localStorage.setItem('user_name', form.value.username)
-    console.log(localStorage.getItem('user_name'));
-
-    router.push('/admin/pages')
+    // Optionally: persist session if remember is checked
+    router.push('/pages/admin')
   } catch (e) {
     errorMsg.value = 'Login failed. Please try again.'
   }
@@ -81,10 +68,10 @@ const login = async () => {
           </VAlert>
           <VForm @submit.prevent="login">
             <VRow>
-              <!-- username -->
+              <!-- email -->
               <VCol cols="12">
-                <AppTextField v-model="form.username" autofocus label="Username" type="text"
-                  placeholder="yourusername" />
+                <AppTextField v-model="form.email" autofocus label="Email" type="email"
+                  placeholder="johndoe@email.com" />
               </VCol>
 
               <!-- password -->

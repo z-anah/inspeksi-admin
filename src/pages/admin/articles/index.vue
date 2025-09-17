@@ -3,6 +3,12 @@ import { supabase } from '@/libs/supabase'
 import { onMounted, reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 
+definePage({
+  meta: {
+    public: false,
+  },
+})
+
 const loading = ref(false)
 const errorMsg = ref('')
 const articleList = ref([])
