@@ -44,7 +44,6 @@ declare module 'vue' {
     DropZone: typeof import('./src/@core/components/DropZone.vue')['default']
     EnableOneTimePasswordDialog: typeof import('./src/components/dialogs/EnableOneTimePasswordDialog.vue')['default']
     ErrorHeader: typeof import('./src/components/ErrorHeader.vue')['default']
-    FormsClientView: typeof import('./src/components/forms-client-view.vue')['default']
     HeroSection: typeof import('./src/components/hero-section.vue')['default']
     I18n: typeof import('./src/@core/components/I18n.vue')['default']
     LatestArticlesSection: typeof import('./src/components/latest-articles-section.vue')['default']
