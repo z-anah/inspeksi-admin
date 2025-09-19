@@ -23,6 +23,32 @@ const form = reactive({
   content: [],
 })
 
+// Add image upload state
+const imageUploading = ref(false)
+const imageUploadError = ref('')
+
+// Handle image file selection and upload
+const handleImageUpload = async (event) => {
+  const file = event.target.files[0]
+  if (!file) return
+  imageUploading.value = true
+  imageUploadError.value = ''
+  try {
+    const fileExt = file.name.split('.').pop()
+    const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`
+    const { data, error } = await supabase.storage
+      .from('product-images')
+      .upload(fileName, file, { cacheControl: '3600', upsert: false })
+    if (error) throw error
+    // Get public URL
+    const { data: publicUrlData } = supabase.storage.from('product-images').getPublicUrl(data.path)
+    form.image_url = publicUrlData.publicUrl
+  } catch (err) {
+    imageUploadError.value = err.message || 'Upload failed'
+  }
+  imageUploading.value = false
+}
+
 const fetchArticle = async () => {
   if (!isEdit.value) return
   loading.value = true
@@ -70,7 +96,7 @@ const saveArticle = async () => {
       .select()
   }
   if (result.error) errorMsg.value = result.error.message
-  else router.push({ name: 'admin-articles' })
+  else router.push({ name: 'admin' })
   loading.value = false
 }
 
@@ -93,7 +119,16 @@ onMounted(() => {
           <AppTextField v-model="form.type" label="Type (e.g. opini, kisah, rilis)" required class="mb-4" />
           <AppTextField v-model="form.title" label="Title" required class="mb-4" />
           <AppTextField v-model="form.published_at" label="Published Date" type="date" required class="mb-4" />
-          <AppTextField v-model="form.image_url" label="Image URL" class="mb-4" />
+          <!-- Image upload section -->
+          <div class="mb-4">
+            <label class="block font-medium mb-1">Image</label>
+            <input type="file" accept="image/*" @change="handleImageUpload" :disabled="imageUploading" />
+            <div v-if="imageUploading" class="text-sm text-gray-500 mt-1">Uploading...</div>
+            <div v-if="imageUploadError" class="text-sm text-red-500 mt-1">{{ imageUploadError }}</div>
+            <div v-if="form.image_url" class="mt-2">
+              <img :src="form.image_url" alt="Article Image" style="max-width: 200px; max-height: 200px;" />
+            </div>
+          </div>
           <div class="mb-4">
             <label class="block font-medium mb-1">Content Paragraphs</label>
             <div v-for="(p, i) in form.content" :key="i" class="flex items-center gap-2 mb-2">
@@ -110,7 +145,7 @@ onMounted(() => {
       </VCardText>
       <VCardActions>
         <VSpacer />
-        <VBtn text @click="router.push({ name: 'admin-articles' })">Cancel</VBtn>
+        <VBtn text @click="router.push({ name: 'admin' })">Cancel</VBtn>
         <VBtn color="primary" :loading="loading" @click="saveArticle">
           Save
         </VBtn>

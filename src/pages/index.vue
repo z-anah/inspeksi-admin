@@ -8,7 +8,6 @@ import CustomersReview from '@/views/front-pages/landing-page/customers-review.v
 import FaqSection from '@/views/front-pages/landing-page/faq-section.vue'
 import Features from '@/views/front-pages/landing-page/features.vue'
 import OurTeam from '@/views/front-pages/landing-page/our-team.vue'
-import ProductStats from '@/views/front-pages/landing-page/product-stats.vue'
 import { useConfigStore } from '@core/stores/config'
 
 const store = useConfigStore()
@@ -43,43 +42,40 @@ useIntersectionObserver([
 <template>
   <div class="landing-page-wrapper">
 
-        <Navbar :active-id="activeSectionId" />
+    <Navbar :active-id="activeSectionId" />
 
-        <!-- 👉 Hero Section -->
-        <HeroSection />
+    <!-- 👉 Hero Section -->
+    <HeroSection />
 
-        <!-- 👉 Latest Articles Section -->
-        <LatestArticlesSection />
+    <!-- 👉 Latest Articles Section -->
+    <LatestArticlesSection />
 
-        <!-- 👉 Useful features  -->
-        <div :style="{ 'background-color': 'rgb(var(--v-theme-surface))' }">
-          <Features ref="refFeatures" />
-        </div>
-        
-        <!-- 👉 Customer Review -->
-        <div :style="{ 'background-color': 'rgb(var(--v-theme-surface))' }">
-          <CustomersReview />
-        </div>
+    <!-- 👉 Useful features  -->
+    <div :style="{ 'background-color': 'rgb(var(--v-theme-surface))' }">
+      <Features ref="refFeatures" />
+    </div>
 
-        <!-- 👉 Our Team -->
-        <div :style="{ 'background-color': 'rgb(var(--v-theme-surface))' }">
-          <OurTeam ref="refTeam" />
-        </div>
+    <!-- 👉 Customer Review -->
+    <div :style="{ 'background-color': 'rgb(var(--v-theme-surface))' }">
+      <CustomersReview />
+    </div>
 
-        <!-- 👉 Product stats -->
-        <ProductStats />
+    <!-- 👉 Our Team -->
+    <div :style="{ 'background-color': 'rgb(var(--v-theme-surface))' }">
+      <OurTeam ref="refTeam" />
+    </div>
 
-        <!-- 👉 FAQ Section -->
-        <div :style="{ 'background-color': 'rgb(var(--v-theme-surface))' }">
-          <FaqSection ref="refFaq" />
-        </div>
+    <!-- 👉 FAQ Section -->
+    <div :style="{ 'background-color': 'rgb(var(--v-theme-surface))' }">
+      <FaqSection ref="refFaq" />
+    </div>
 
-        <!-- 👉 Contact Us  -->
-        <ContactUs ref="refContact" />
+    <!-- 👉 Contact Us  -->
+    <ContactUs ref="refContact" />
 
 
-        <!-- 👉 Footer -->
-        <Footer />
+    <!-- 👉 Footer -->
+    <Footer />
   </div>
 </template>
 

@@ -1,8 +1,8 @@
 <script setup>
-import appleImg from '@images/front-pages/landing-page/apple-icon.png'
-import googlePlayImg from '@images/front-pages/landing-page/google-play-icon.png'
+import { supabase } from '@/libs/supabase'
 import { VNodeRenderer } from '@layouts/components/VNodeRenderer'
 import { themeConfig } from '@themeConfig'
+import { onMounted, ref } from 'vue'
 
 
 const pagesList = [
@@ -10,6 +10,23 @@ const pagesList = [
 
 const demoList = [
 ]
+
+// WhatsApp number from Supabase
+const whatsappNumber = ref('')
+
+const fetchWhatsAppNumber = async () => {
+  const { data, error } = await supabase
+    .from('content')
+    .select('value')
+    .eq('section', 'contact')
+    .eq('key', 'wa')
+    .single()
+  if (!error && data) {
+    whatsappNumber.value = data.value
+  }
+}
+
+onMounted(fetchWhatsAppNumber)
 </script>
 
 <template>
@@ -27,14 +44,8 @@ const demoList = [
             </div>
 
             <div class="mb-6" :class="[$vuetify.theme.current.dark ? 'text-body-1' : 'text-primary']">
-              Most Powerful & Comprehensive 🤩 Vuejs Admin Template with Elegant Material Design & Unique Layouts.
+              Situs Resmi Insan <br>Pengadaan Antikorupsi <br>{{ whatsappNumber || '+' }}
             </div>
-            <VForm class="subscribe-form d-flex align-center">
-              <AppTextField label="Subscribe to newsletter" placeholder="john@email.com" />
-              <VBtn class="align-self-end rounded-s-0">
-                Subscribe
-              </VBtn>
-            </VForm>
           </div>
         </VCol>
 
@@ -86,15 +97,15 @@ const demoList = [
 
             <div>
               <VBtn v-for="(item, index) in [
-                { image: appleImg, store: 'App Store' },
-                { image: googlePlayImg, store: 'Google Play' },
+                { icon: 'tabler-trophy', store: 'Mendukung' },
+                { icon: 'tabler-crown', store: 'Berani Melawan' },
               ]" :key="index" color="#282c3e" height="56" class="mb-4 d-block">
                 <template #default>
                   <div class="d-flex align-center gap-x-8 footer-logo-buttons">
-                    <VImg :src="item.image" height="34" width="34" />
+                    <VIcon :icon="item.icon" size="34" />
                     <div class="d-flex flex-column justify-content-start">
                       <div :class="$vuetify.theme.current.dark ? 'text-body-2' : 'text-white-variant text-body-2'">
-                        Download on the
+                        Bersama, Kita Saling
                       </div>
                       <h6 class="text-h6 text-start"
                         :class="$vuetify.theme.current.dark ? 'text-body-1' : 'footer-title'">
@@ -119,19 +130,6 @@ const demoList = [
 
             {{ new Date().getFullYear() }}
             Inspeksi
-          </div>
-
-          <div class="d-flex gap-x-6">
-            <template v-for="(item, index) in [
-              { title: 'github', icon: 'tabler-brand-github-filled', href: 'https://github.com/pixinvent' },
-              { title: 'facebook', icon: 'tabler-brand-facebook-filled', href: 'https://www.facebook.com/pixinvents/' },
-              { title: 'twitter', icon: 'tabler-brand-twitter-filled', href: 'https://twitter.com/pixinvents' },
-              { title: 'google', icon: 'tabler-brand-youtube-filled', href: 'https://www.youtube.com/channel/UClOcB3o1goJ293ri_Hxpklg' },
-            ]" :key="index">
-              <a :href="item.href" target="_blank" rel="noopener noreferrer">
-                <VIcon :icon="item.icon" size="16" color="white" />
-              </a>
-            </template>
           </div>
         </div>
       </VContainer>

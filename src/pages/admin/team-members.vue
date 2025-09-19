@@ -8,49 +8,51 @@ definePage({
   },
 })
 
+const teamMembers = ref([])
 const loading = ref(false)
 const errorMsg = ref('')
-const formList = ref([])
 const dialog = ref(false)
 const deleteDialog = ref(false)
 const isEdit = ref(false)
 const form = reactive({
   id: null,
-  icon: '',
-  title: '',
-  link: '',
-  description: '',
-  is_active: true,
+  name: '',
+  position: '',
+  image_url: '',
 })
 const deleteId = ref(null)
+const imageUploading = ref(false)
+const imageUploadError = ref('')
 
-const fetchForms = async () => {
+const fetchTeamMembers = async () => {
   loading.value = true
   errorMsg.value = ''
   const { data, error } = await supabase
-    .from('forms')
+    .from('team_members')
     .select('*')
     .order('created_at', { ascending: false })
   if (error) errorMsg.value = error.message
-  else formList.value = data
+  else teamMembers.value = data
   loading.value = false
 }
 
 const openCreate = () => {
   isEdit.value = false
-  Object.assign(form, { id: null, icon: '', title: '', link: '', description: '', is_active: true })
+  Object.assign(form, { id: null, name: '', position: '', image_url: '' })
   dialog.value = true
+  errorMsg.value = ''
 }
 
 const openEdit = (row) => {
   isEdit.value = true
   Object.assign(form, row)
   dialog.value = true
+  errorMsg.value = ''
 }
 
-const saveForm = async () => {
-  if (!form.title || !form.link) {
-    errorMsg.value = 'Title and Link are required'
+const saveTeamMember = async () => {
+  if (!form.name || !form.position) {
+    errorMsg.value = 'Name and Position are required'
     return
   }
   loading.value = true
@@ -58,32 +60,28 @@ const saveForm = async () => {
   let result
   if (isEdit.value) {
     result = await supabase
-      .from('forms')
+      .from('team_members')
       .update({
-        icon: form.icon,
-        title: form.title,
-        link: form.link,
-        description: form.description,
-        is_active: form.is_active,
+        name: form.name,
+        position: form.position,
+        image_url: form.image_url,
       })
       .eq('id', form.id)
       .select()
   } else {
     result = await supabase
-      .from('forms')
+      .from('team_members')
       .insert([{
-        icon: form.icon,
-        title: form.title,
-        link: form.link,
-        description: form.description,
-        is_active: form.is_active,
+        name: form.name,
+        position: form.position,
+        image_url: form.image_url,
       }])
       .select()
   }
   if (result.error) errorMsg.value = result.error.message
   else {
     dialog.value = false
-    fetchForms()
+    fetchTeamMembers()
   }
   loading.value = false
 }
@@ -93,40 +91,57 @@ const openDelete = (id) => {
   deleteDialog.value = true
 }
 
-const deleteForm = async () => {
+const deleteTeamMember = async () => {
   loading.value = true
   errorMsg.value = ''
   const { error } = await supabase
-    .from('forms')
+    .from('team_members')
     .delete()
     .eq('id', deleteId.value)
   if (error) errorMsg.value = error.message
   deleteDialog.value = false
-  fetchForms()
+  fetchTeamMembers()
   loading.value = false
 }
 
-onMounted(fetchForms)
+// Handle image file selection and upload
+const handleImageUpload = async (event) => {
+  const file = event.target.files[0]
+  if (!file) return
+  imageUploading.value = true
+  imageUploadError.value = ''
+  try {
+    const fileExt = file.name.split('.').pop()
+    const fileName = `team-member-${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`
+    const { data, error } = await supabase.storage
+      .from('product-images')
+      .upload(fileName, file, { cacheControl: '3600', upsert: false })
+    if (error) throw error
+    // Get public URL
+    const { data: publicUrlData } = supabase.storage.from('product-images').getPublicUrl(data.path)
+    form.image_url = publicUrlData.publicUrl
+  } catch (err) {
+    imageUploadError.value = err.message || 'Upload failed'
+  }
+  imageUploading.value = false
+}
+
+onMounted(fetchTeamMembers)
 </script>
 
 <template>
-  <VAlert type="info" class="mb-4" variant="tonal"> Untuk memilih ikon, silakan cek daftar nama ikon di <a
-      href="https://tabler.io/icons" target="_blank" class="text-primary font-semibold underline">
-      https://tabler.io/icons</a> dan gunakan nama ikon (misal:
-    <code>tabler-user</code>).
-  </VAlert>
   <div class="p-6">
     <div class="mb-8">
       <VCard flat
         class="py-6 px-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4 shadow-none border-b border-gray-200">
         <div>
-          <h2 class="text-2xl font-bold mb-1">Forms Management</h2>
+          <h2 class="text-2xl font-bold mb-1">Team Members Management</h2>
           <p class="text-gray-500 text-base">
-            Manage all forms and their visibility on your website.
+            Manage all team members displayed on your website.
           </p>
         </div>
         <VBtn color="primary" class="mt-4 md:mt-0" @click="openCreate" size="large" prepend-icon="tabler-plus">
-          Add Form
+          Add Team Member
         </VBtn>
       </VCard>
     </div>
@@ -135,28 +150,17 @@ onMounted(fetchForms)
       {{ errorMsg }}
     </VAlert>
 
-    <VDataTable :items="formList" :loading="loading" class="rounded-lg shadow" :headers="[
-      { title: 'Icon', key: 'icon' },
-      { title: 'Title', key: 'title' },
-      { title: 'Link', key: 'link' },
-      { title: 'Description', key: 'description' },
-      { title: 'Active', key: 'is_active' },
+    <VDataTable :items="teamMembers" :loading="loading" class="rounded-lg shadow" :headers="[
+      { title: 'Name', key: 'name' },
+      { title: 'Position', key: 'position' },
+      { title: 'Image', key: 'image_url' },
       { title: 'Created', key: 'created_at' },
       { title: 'Actions', key: 'actions', sortable: false },
     ]" item-value="id" density="comfortable">
-      <template #item.icon="{ item }">
-        <span v-if="item.icon" class="material-icons">{{ item.icon }}</span>
+      <template #item.image_url="{ item }">
+        <img v-if="item.image_url" :src="item.image_url" alt="team member"
+          style="height:48px;max-width:80px;object-fit:cover;border-radius:8px;" />
         <span v-else class="text-gray-400">-</span>
-      </template>
-      <template #item.link="{ item }">
-        <a :href="item.link" target="_blank" class="text-primary underline break-all">
-          {{ item.link }}
-        </a>
-      </template>
-      <template #item.is_active="{ item }">
-        <VChip :color="item.is_active ? 'success' : 'error'" size="small">
-          {{ item.is_active ? 'Active' : 'Inactive' }}
-        </VChip>
       </template>
       <template #item.created_at="{ item }">
         <span class="text-xs text-gray-500">{{ new Date(item.created_at).toLocaleString() }}</span>
@@ -178,21 +182,29 @@ onMounted(fetchForms)
     <VDialog v-model="dialog" max-width="500">
       <VCard>
         <VCardTitle>
-          {{ isEdit ? 'Edit Form' : 'Add Form' }}
+          {{ isEdit ? 'Edit Team Member' : 'Add Team Member' }}
         </VCardTitle>
         <VCardText>
-          <VForm @submit.prevent="saveForm">
-            <VTextField v-model="form.icon" label="Material Icon Name" class="mb-4" />
-            <VTextField v-model="form.title" label="Title" required class="mb-4" />
-            <VTextField v-model="form.link" label="Link" required class="mb-4" />
-            <VTextarea v-model="form.description" label="Description" class="mb-4" />
-            <VSwitch v-model="form.is_active" label="Active" class="mb-4" />
+          <VForm @submit.prevent="saveTeamMember">
+            <VTextField v-model="form.name" label="Name" required class="mb-4" />
+            <VTextField v-model="form.position" label="Position" required class="mb-4" />
+            <!-- Image upload section -->
+            <div class="mb-4">
+              <label class="block font-medium mb-1">Image</label>
+              <input type="file" accept="image/*" @change="handleImageUpload" :disabled="imageUploading" />
+              <div v-if="imageUploading" class="text-sm text-gray-500 mt-1">Uploading...</div>
+              <div v-if="imageUploadError" class="text-sm text-red-500 mt-1">{{ imageUploadError }}</div>
+              <div v-if="form.image_url" class="mt-2">
+                <img :src="form.image_url" alt="Team Member Image"
+                  style="max-width: 120px; max-height: 120px; border-radius: 8px;" />
+              </div>
+            </div>
           </VForm>
         </VCardText>
         <VCardActions>
           <VSpacer />
           <VBtn text @click="dialog = false">Cancel</VBtn>
-          <VBtn color="primary" :loading="loading" @click="saveForm">
+          <VBtn color="primary" :loading="loading" @click="saveTeamMember">
             Save
           </VBtn>
         </VCardActions>
@@ -202,14 +214,14 @@ onMounted(fetchForms)
     <!-- Delete Confirmation Dialog -->
     <VDialog v-model="deleteDialog" max-width="400">
       <VCard>
-        <VCardTitle>Delete Form?</VCardTitle>
+        <VCardTitle>Delete Team Member?</VCardTitle>
         <VCardText>
-          Are you sure you want to delete this form?
+          Are you sure you want to delete this team member?
         </VCardText>
         <VCardActions>
           <VSpacer />
           <VBtn text @click="deleteDialog = false">Cancel</VBtn>
-          <VBtn color="error" :loading="loading" @click="deleteForm">
+          <VBtn color="error" :loading="loading" @click="deleteTeamMember">
             Delete
           </VBtn>
         </VCardActions>

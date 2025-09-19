@@ -1,9 +1,35 @@
 <script setup>
-import ConnectImg from '@images/front-pages/landing-page/contact-customer-service.png'
+import { supabase } from '@/libs/supabase'
+import cuImg from '@images/front-pages/landing-page/contact-us.png'
+import { onMounted, ref } from 'vue'
 
 const name = ref('')
 const email = ref('')
 const message = ref('')
+
+const whatsappNumber = ref('')
+
+// Fetch WhatsApp number from Supabase
+const fetchWhatsAppNumber = async () => {
+  const { data, error } = await supabase
+    .from('content')
+    .select('value')
+    .eq('section', 'contact')
+    .eq('key', 'wa')
+    .single()
+  if (!error && data) {
+    whatsappNumber.value = data.value
+  }
+}
+
+function sendToWhatsApp() {
+  if (!whatsappNumber.value) return
+  const text = `Nama: ${name.value}\nEmail: ${email.value}\nPesan: ${message.value}`
+  const url = `https://wa.me/${whatsappNumber.value}?text=${encodeURIComponent(text)}`
+  window.open(url, '_blank')
+}
+
+onMounted(fetchWhatsAppNumber)
 </script>
 
 <template>
@@ -11,140 +37,65 @@ const message = ref('')
     <!-- 👉 Headers  -->
     <div class="contact-us-section">
       <div class="headers d-flex justify-center flex-column align-center pb-16">
-        <VChip
-          label
-          color="primary"
-          class="mb-4"
-          size="small"
-        >
-          Contact Us
+        <VChip label color="primary" class="mb-4" size="small">
+          Hubungi Kami
         </VChip>
         <h4 class="d-flex align-center text-h4 mb-1 flex-wrap justify-center">
           <div class="position-relative me-2">
             <div class="section-title">
-              let's work
+              Mari bekerja sama
             </div>
           </div>
-          together
         </h4>
         <p class="text-body-1 mb-0">
-          Any question or remark? just write us a message
+          Ada pertanyaan atau masukan? Tulis pesan untuk kami
         </p>
       </div>
 
       <div class="mb-15">
         <VRow class="match-height">
-          <VCol
-            cols="12"
-            md="5"
-          >
-            <div class="contact-card h-100">
-              <VCard
-                variant="outlined"
-                border
-                class="pa-2"
-                :style="{ borderRadius: '3.75rem 0.375rem 0.375rem 0.375rem' }"
-              >
-                <VImg
-                  :src="ConnectImg"
-                  :style="{ borderRadius: '3.75rem 0.375rem 0.375rem 0.375rem' }"
-                />
-                <VCardText class="pa-4 pb-1">
-                  <div class="d-flex justify-space-between flex-wrap gap-y-4">
-                    <div
-                      v-for="(item, index) in [
-                        { title: 'Email', icon: 'tabler-mail', color: 'primary', value: 'example@gmail.com' },
-                        { title: 'Phone', icon: 'tabler-phone-call', color: 'success', value: '+1234 568 963' },
-                      ]"
-                      :key="index"
-                      class="d-flex gap-x-3 align-center"
-                    >
-                      <div>
-                        <VAvatar
-                          size="36"
-                          :color="item.color"
-                          variant="tonal"
-                          class="rounded-sm"
-                        >
-                          <VIcon
-                            :icon="item.icon"
-                            size="24"
-                          />
-                        </VAvatar>
-                      </div>
-
-                      <div>
-                        <div class="text-body-1">
-                          {{ item .title }}
-                        </div>
-                        <h6 class="text-h6">
-                          {{ item.value }}
-                        </h6>
-                      </div>
-                    </div>
-                  </div>
-                </VCardText>
-              </VCard>
-            </div>
-          </VCol>
-
-          <VCol
-            cols="12"
-            md="7"
-          >
+          <VCol cols="12" md="7">
             <VCard>
               <VCardItem class="pb-0">
                 <h4 class="text-h4 mb-1">
-                  Send a message
+                  Kirim pesan
                 </h4>
               </VCardItem>
 
               <VCardText>
                 <p class="mb-6">
-                  If you would like to discuss anything related to payment, account, licensing, partnerships, or have pre-sales questions, you’re at the right place.
+                  Jika Anda ingin mendiskusikan sesuatu yang terkait dengan pembayaran, akun, lisensi, kemitraan, atau
+                  memiliki pertanyaan pra-penjualan, Anda berada di tempat yang tepat.
                 </p>
-                <VForm @submit.prevent="() => {}">
+                <VForm @submit.prevent="sendToWhatsApp">
                   <VRow>
-                    <VCol
-                      cols="12"
-                      md="6"
-                    >
-                      <AppTextField
-                        v-model="name"
-                        placeholder="John Doe"
-                        label="Full Name"
-                      />
+                    <VCol cols="12" md="6">
+                      <AppTextField v-model="name" placeholder="John Doe" label="Nama Lengkap" />
                     </VCol>
 
-                    <VCol
-                      cols="12"
-                      md="6"
-                    >
-                      <AppTextField
-                        v-model="email"
-                        placeholder="johndoe@gmail.com"
-                        label="Email address"
-                      />
+                    <VCol cols="12" md="6">
+                      <AppTextField v-model="email" placeholder="johndoe@gmail.com" label="Alamat email" />
                     </VCol>
 
                     <VCol cols="12">
-                      <AppTextarea
-                        v-model="message"
-                        placeholder="Write a message"
-                        rows="3"
-                        label="Message"
-                      />
+                      <AppTextarea v-model="message" placeholder="Tulis pesan" rows="3" label="Pesan" />
                     </VCol>
 
                     <VCol>
                       <VBtn type="submit">
-                        Send Inquiry
+                        Kirim Pertanyaan
                       </VBtn>
                     </VCol>
                   </VRow>
                 </VForm>
               </VCardText>
             </VCard>
+          </VCol>
+
+          <VCol cols="12" md="5">
+            <div class="pt-10 d-flex align-center justify-center h-100">
+              <VImg :src="cuImg" height="330" max-width="330" />
+            </div>
           </VCol>
         </VRow>
       </div>

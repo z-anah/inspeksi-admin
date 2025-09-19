@@ -1,35 +1,30 @@
 <script setup>
+import { supabase } from '@/libs/supabase'
+import { onMounted, ref } from 'vue'
+
 const sectionTitle = 'Mengapa Bergabung?'
-const featuresData = [
-  {
-    icon: 'tabler-brand-wechat',
-    title: 'Komunitas Solid',
-    desc: 'Bersama anggota lain, Anda akan saling mendukung dalam gerakan antikorupsi.',
-  },
-  {
-    icon: 'tabler-school',
-    title: 'Edukasi & Workshop',
-    desc: 'Ikuti pelatihan, seminar, dan diskusi untuk meningkatkan pengetahuan Anda.',
-  },
-  {
-    icon: 'tabler-speakerphone',
-    title: 'Aksi Nyata',
-    desc: 'Terlibat langsung dalam aksi, program kerja, dan advokasi pengadaan bersih.',
-  },
-]
+const sectionSubTitle = 'Opini Kami'
+const featuresData = ref([])
+
+const fetchOpinions = async () => {
+  const { data, error } = await supabase
+    .from('opinion')
+    .select('icon, title, description')
+    .order('created_at', { ascending: false })
+  if (!error && data) {
+    featuresData.value = data
+  }
+}
+
+onMounted(fetchOpinions)
 </script>
 
 <template>
   <VContainer id="features">
     <div class="feature-cards">
       <div class="headers d-flex justify-center flex-column align-center mb-12">
-        <VChip
-          label
-          color="primary"
-          class="mb-4"
-          size="small"
-        >
-          {{ sectionTitle }}
+        <VChip label color="primary" class="mb-4" size="small">
+          {{ sectionSubTitle }}
         </VChip>
         <div class="d-flex text-h4 mb-1 align-center flex-wrap justify-center">
           <div class="position-relative me-2">
@@ -40,28 +35,15 @@ const featuresData = [
         </div>
       </div>
       <VRow>
-        <VCol
-          v-for="(data, index) in featuresData"
-          :key="index"
-          cols="12"
-          md="4"
-          sm="6"
-        >
+        <VCol v-for="(data, index) in featuresData" :key="index" cols="12" md="4" sm="6">
           <div class="d-flex flex-column align-center justify-center gap-4 mx-auto">
-            <VIcon
-              :icon="data.icon"
-              size="64"
-              color="primary"
-            />
+            <VIcon :icon="data.icon" size="64" color="primary" />
             <div class="text-center">
               <h5 class="text-h5 mb-2">
                 {{ data.title }}
               </h5>
-              <p
-                class="text-body-1 mb-6"
-                style="max-inline-size: 310px;"
-              >
-                {{ data.desc }}
+              <p class="text-body-1 mb-6" style="max-inline-size: 310px;">
+                {{ data.description }}
               </p>
             </div>
           </div>

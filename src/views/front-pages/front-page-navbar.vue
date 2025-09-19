@@ -1,5 +1,4 @@
 <script setup>
-import NavbarThemeSwitcher from '@/layouts/components/NavbarThemeSwitcher.vue'
 import { VNodeRenderer } from '@layouts/components/VNodeRenderer'
 import { themeConfig } from '@themeConfig'
 import { useWindowScroll } from '@vueuse/core'
@@ -22,6 +21,16 @@ const isMenuOpen = ref(false)
 const isMegaMenuOpen = ref(false)
 
 const menuItems = [
+]
+
+const navLinks = [
+  { label: 'Home', route: { path: '/' } },
+  { label: 'Artikel', route: { path: '/articles' } },
+  { label: 'Produk', route: { name: 'products' } },
+  // { label: 'Informasi', route: { name: 'products', hash: '#informasi' } },
+  // { label: 'Profil', route: { name: 'products', hash: '#profil' } },
+  { label: 'Kegiatan', route: { name: 'calendar' } },
+  { label: 'Formulir', route: { path: '/forms' } },
 ]
 
 const isCurrentRoute = to => {
@@ -53,12 +62,6 @@ const isPageActive = computed(() => menuItems.some(item => item.navItems.some(li
           </RouterLink> -->
 
           <div class="font-weight-medium cursor-pointer">
-            <div :class="[isMenuOpen ? 'mb-6 active-link' : '', isPageActive ? 'active-link' : '']"
-              style="color: rgba(var(--v-theme-on-surface));" class="page-link" @click="isMenuOpen = !isMenuOpen">
-              Pages
-              <VIcon :icon="isMenuOpen ? 'tabler-chevron-up' : 'tabler-chevron-down'" />
-            </div>
-
             <div class="px-4" :class="isMenuOpen ? 'd-block' : 'd-none'">
               <div v-for="(item, index) in menuItems" :key="index">
                 <div class="d-flex align-center gap-x-3 mb-4">
@@ -82,8 +85,13 @@ const isPageActive = computed(() => menuItems.some(item => item.navItems.some(li
             </div>
           </div>
 
-          <RouterLink to="/" target="_blank" class="font-weight-medium nav-link">
+          <!-- <RouterLink to="/" target="_blank" class="font-weight-medium nav-link">
             Admin
+          </RouterLink> -->
+          <RouterLink v-for="(item, index) in navLinks" :key="index" :to="item.route"
+            class="nav-link font-weight-medium py-2 px-2 px-lg-4"
+            :class="[props.activeId?.toLocaleLowerCase().replace('-', ' ') === item.label.toLocaleLowerCase() ? 'active-link' : '']">
+            {{ item.label }}
           </RouterLink>
         </div>
       </div>
@@ -126,27 +134,20 @@ const isPageActive = computed(() => menuItems.some(item => item.navItems.some(li
               {{ item }}
             </RouterLink> -->
 
-            <RouterLink to="/" target="_blank" class="nav-link font-weight-medium py-2 px-2 px-lg-4">
+            <!-- <RouterLink to="/" target="_blank" class="nav-link font-weight-medium py-2 px-2 px-lg-4">
               Admin
+            </RouterLink> -->
+            <RouterLink v-for="(item, index) in navLinks" :to="item.route" :key="index"
+              class="nav-link font-weight-medium py-2 px-2 px-lg-4"
+              :class="[props.activeId?.toLocaleLowerCase().replace('-', ' ') === item.label.toLocaleLowerCase() ? 'active-link' : '']">
+              {{ item.label }}
             </RouterLink>
           </div>
         </div>
 
         <VSpacer />
 
-        <div class="d-flex gap-x-4">
-          <NavbarThemeSwitcher />
 
-          <VBtn v-if="$vuetify.display.lgAndUp" prepend-icon="tabler-shopping-cart" variant="elevated" color="primary"
-            href="https://1.envato.market/vuexy_admin" target="_blank" rel="noopener noreferrer">
-            Purchase Now
-          </VBtn>
-
-          <VBtn v-else rounded icon variant="elevated" color="primary" href="https://1.envato.market/vuexy_admin"
-            target="_blank" rel="noopener noreferrer">
-            <VIcon icon="tabler-shopping-cart" />
-          </VBtn>
-        </div>
       </VAppBar>
     </div>
   </div>

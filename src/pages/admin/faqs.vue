@@ -1,7 +1,6 @@
 <script setup>
 import { supabase } from '@/libs/supabase'
 import { onMounted, reactive, ref } from 'vue'
-import { useRouter } from 'vue-router'
 
 definePage({
   meta: {
@@ -9,43 +8,77 @@ definePage({
   },
 })
 
+const faqs = ref([])
 const loading = ref(false)
 const errorMsg = ref('')
-const articleList = ref([])
+const dialog = ref(false)
+const deleteDialog = ref(false)
 const isEdit = ref(false)
 const form = reactive({
   id: null,
-  type: '',
-  title: '',
-  published_at: '',
-  image_url: '',
-  content: [],
+  question: '',
+  answer: '',
 })
-const router = useRouter()
-const deleteDialog = ref(false)
 const deleteId = ref(null)
 
-const fetchArticles = async () => {
+const fetchFaqs = async () => {
   loading.value = true
   errorMsg.value = ''
   const { data, error } = await supabase
-    .from('articles')
+    .from('faqs')
     .select('*')
-    .order('published_at', { ascending: false })
+    .order('created_at', { ascending: false })
   if (error) errorMsg.value = error.message
-  else articleList.value = data
+  else faqs.value = data
   loading.value = false
 }
 
 const openCreate = () => {
   isEdit.value = false
-  Object.assign(form, { id: null, type: '', title: '', published_at: '', image_url: '', content: [] })
-  router.push({ name: 'admin-articles-detail', params: { id: 'new' } })
+  Object.assign(form, { id: null, question: '', answer: '' })
+  dialog.value = true
+  errorMsg.value = ''
 }
 
 const openEdit = (row) => {
   isEdit.value = true
-  router.push(`/admin/articles/edit/${row.id}`)
+  Object.assign(form, row)
+  dialog.value = true
+  errorMsg.value = ''
+}
+
+const saveFaq = async () => {
+  if (!form.question || !form.answer) {
+    errorMsg.value = 'Question and Answer are required'
+    return
+  }
+  loading.value = true
+  errorMsg.value = ''
+  let result
+  if (isEdit.value) {
+    result = await supabase
+      .from('faqs')
+      .update({
+        question: form.question,
+        answer: form.answer,
+      })
+      .eq('id', form.id)
+      .select()
+  } else {
+    result = await supabase
+      .from('faqs')
+      .insert([{
+        question: form.question,
+        answer: form.answer,
+      }])
+      .select()
+  }
+  if (result.error) errorMsg.value = result.error.message
+  else {
+    dialog.value = false
+    fetchFaqs()
+  }
+  loading.value = false
 }
 
 const openDelete = (id) => {
@@ -53,20 +86,20 @@ const openDelete = (id) => {
   deleteDialog.value = true
 }
 
-const deleteArticle = async () => {
+const deleteFaq = async () => {
   loading.value = true
   errorMsg.value = ''
   const { error } = await supabase
-    .from('articles')
+    .from('faqs')
     .delete()
     .eq('id', deleteId.value)
   if (error) errorMsg.value = error.message
   deleteDialog.value = false
-  fetchArticles()
+  fetchFaqs()
   loading.value = false
 }
 
-onMounted(fetchArticles)
+onMounted(fetchFaqs)
 </script>
 
 <template>
@@ -75,13 +108,13 @@ onMounted(fetchArticles)
       <VCard flat
         class="py-6 px-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4 shadow-none border-b border-gray-200">
         <div>
-          <h2 class="text-2xl font-bold mb-1">Articles Management</h2>
+          <h2 class="text-2xl font-bold mb-1">FAQs Management</h2>
           <p class="text-gray-500 text-base">
-            Manage all articles and their details for your website.
+            Manage all frequently asked questions for your website.
           </p>
         </div>
         <VBtn color="primary" class="mt-4 md:mt-0" @click="openCreate" size="large" prepend-icon="tabler-plus">
-          Add Article
+          Add FAQ
         </VBtn>
       </VCard>
     </div>
@@ -90,21 +123,12 @@ onMounted(fetchArticles)
       {{ errorMsg }}
     </VAlert>
 
-    <VDataTable :items="articleList" :loading="loading" class="rounded-lg shadow" :headers="[
-      { title: 'Type', key: 'type' },
-      { title: 'Title', key: 'title' },
-      { title: 'Published', key: 'published_at' },
+    <VDataTable :items="faqs" :loading="loading" class="rounded-lg shadow" :headers="[
+      { title: 'Question', key: 'question' },
+      { title: 'Answer', key: 'answer' },
       { title: 'Created', key: 'created_at' },
       { title: 'Actions', key: 'actions', sortable: false },
     ]" item-value="id" density="comfortable">
-      <template #item.published_at="{ item }">
-        <span class="text-xs text-gray-700">{{ item.published_at }}</span>
-      </template>
-      <template #item.content="{ item }">
-        <ul class="list-disc pl-4">
-          <li v-for="(p, i) in item.content" :key="i" class="truncate max-w-xs">{{ p }}</li>
-        </ul>
-      </template>
       <template #item.created_at="{ item }">
         <span class="text-xs text-gray-500">{{ new Date(item.created_at).toLocaleString() }}</span>
       </template>
@@ -121,17 +145,39 @@ onMounted(fetchArticles)
       </template>
     </VDataTable>
 
+    <!-- Create/Edit Dialog -->
+    <VDialog v-model="dialog" max-width="500">
+      <VCard>
+        <VCardTitle>
+          {{ isEdit ? 'Edit FAQ' : 'Add FAQ' }}
+        </VCardTitle>
+        <VCardText>
+          <VForm @submit.prevent="saveFaq">
+            <VTextarea v-model="form.question" label="Question" required class="mb-4" />
+            <VTextarea v-model="form.answer" label="Answer" required class="mb-4" />
+          </VForm>
+        </VCardText>
+        <VCardActions>
+          <VSpacer />
+          <VBtn text @click="dialog = false">Cancel</VBtn>
+          <VBtn color="primary" :loading="loading" @click="saveFaq">
+            Save
+          </VBtn>
+        </VCardActions>
+      </VCard>
+    </VDialog>
+
     <!-- Delete Confirmation Dialog -->
     <VDialog v-model="deleteDialog" max-width="400">
       <VCard>
-        <VCardTitle>Delete Article?</VCardTitle>
+        <VCardTitle>Delete FAQ?</VCardTitle>
         <VCardText>
-          Are you sure you want to delete this article?
+          Are you sure you want to delete this FAQ?
         </VCardText>
         <VCardActions>
           <VSpacer />
           <VBtn text @click="deleteDialog = false">Cancel</VBtn>
-          <VBtn color="error" :loading="loading" @click="deleteArticle">
+          <VBtn color="error" :loading="loading" @click="deleteFaq">
             Delete
           </VBtn>
         </VCardActions>

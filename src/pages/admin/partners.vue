@@ -20,6 +20,8 @@ const form = reactive({
   logo_url: '',
 })
 const deleteId = ref(null)
+const imageUploading = ref(false)
+const imageUploadError = ref('')
 
 const fetchPartners = async () => {
   loading.value = true
@@ -97,6 +99,28 @@ const deletePartner = async () => {
   loading.value = false
 }
 
+// Handle image file selection and upload
+const handleImageUpload = async (event) => {
+  const file = event.target.files[0]
+  if (!file) return
+  imageUploading.value = true
+  imageUploadError.value = ''
+  try {
+    const fileExt = file.name.split('.').pop()
+    const fileName = `partner-logo-${Date.now()}-${Math.random().toString(36).substring(2)}.${fileExt}`
+    const { data, error } = await supabase.storage
+      .from('product-images')
+      .upload(fileName, file, { cacheControl: '3600', upsert: false })
+    if (error) throw error
+    // Get public URL
+    const { data: publicUrlData } = supabase.storage.from('product-images').getPublicUrl(data.path)
+    form.logo_url = publicUrlData.publicUrl
+  } catch (err) {
+    imageUploadError.value = err.message || 'Upload failed'
+  }
+  imageUploading.value = false
+}
+
 onMounted(fetchPartners)
 </script>
 
@@ -128,7 +152,7 @@ onMounted(fetchPartners)
       { title: 'Actions', key: 'actions', sortable: false },
     ]" item-value="id" density="comfortable">
       <template #item.logo_url="{ item }">
-        <img :src="item.logo_url" alt="logo" class="h-10 max-w-[100px] object-contain" />
+        <img :src="item.logo_url" alt="logo" style="height:38px;max-width:100px;object-fit:contain;" />
       </template>
       <template #item.created_at="{ item }">
         <span class="text-xs text-gray-500">{{ new Date(item.created_at).toLocaleString() }}</span>
@@ -155,7 +179,17 @@ onMounted(fetchPartners)
         <VCardText>
           <VForm @submit.prevent="savePartner">
             <VTextField v-model="form.name" label="Name" required class="mb-4" />
-            <VTextField v-model="form.logo_url" label="Logo URL" required class="mb-4" />
+            <!-- Image upload section -->
+            <div class="mb-4">
+              <label class="block font-medium mb-1">Logo</label>
+              <input type="file" accept="image/*" @change="handleImageUpload" :disabled="imageUploading" />
+              <div v-if="imageUploading" class="text-sm text-gray-500 mt-1">Uploading...</div>
+              <div v-if="imageUploadError" class="text-sm text-red-500 mt-1">{{ imageUploadError }}</div>
+              <div v-if="form.logo_url" class="mt-2">
+                <img :src="form.logo_url" alt="Partner Logo"
+                  style="max-width: 120px; max-height: 120px; object-fit: contain; border-radius: 8px;" />
+              </div>
+            </div>
           </VForm>
         </VCardText>
         <VCardActions>
