@@ -1,90 +1,142 @@
 <script setup>
-import HeroSection from '@/components/hero-section.vue'
-import LatestArticlesSection from '@/components/latest-articles-section.vue'
-import Footer from '@/views/front-pages/front-page-footer.vue'
-import Navbar from '@/views/front-pages/front-page-navbar.vue'
-import ContactUs from '@/views/front-pages/landing-page/contact-us.vue'
-import CustomersReview from '@/views/front-pages/landing-page/customers-review.vue'
-import FaqSection from '@/views/front-pages/landing-page/faq-section.vue'
-import Features from '@/views/front-pages/landing-page/features.vue'
-import OurTeam from '@/views/front-pages/landing-page/our-team.vue'
-import { useConfigStore } from '@core/stores/config'
+import { supabase } from '@/libs/supabase'
+import { onMounted, reactive, ref } from 'vue'
+import { useRouter } from 'vue-router'
 
-const store = useConfigStore()
-
-store.skin = 'default'
 definePage({
   meta: {
-    layout: 'blank',
-    public: true,
+    public: false,
   },
 })
 
-const activeSectionId = ref()
-const refHome = ref()
-const refFeatures = ref()
-const refTeam = ref()
-const refContact = ref()
-const refFaq = ref()
+const loading = ref(false)
+const errorMsg = ref('')
+const articleList = ref([])
+const isEdit = ref(false)
+const form = reactive({
+  id: null,
+  type: '',
+  title: '',
+  published_at: '',
+  image_url: '',
+  content: [],
+})
+const router = useRouter()
+const deleteDialog = ref(false)
+const deleteId = ref(null)
 
-useIntersectionObserver([
-  refHome,
-  refFeatures,
-  refTeam,
-  refContact,
-  refFaq,
-], ([{ isIntersecting, target }]) => {
-  if (isIntersecting)
-    activeSectionId.value = target.id
-}, { threshold: 0.25 })
+const fetchArticles = async () => {
+  loading.value = true
+  errorMsg.value = ''
+  const { data, error } = await supabase
+    .from('articles')
+    .select('*')
+    .order('published_at', { ascending: false })
+  if (error) errorMsg.value = error.message
+  else articleList.value = data
+  loading.value = false
+}
+
+const openCreate = () => {
+  isEdit.value = false
+  Object.assign(form, { id: null, type: '', title: '', published_at: '', image_url: '', content: [] })
+  // Change to correct route for creating a new article
+  router.push('/articles/edit/new')
+}
+
+const openEdit = (row) => {
+  isEdit.value = true
+  router.push(`/articles/edit/${row.id}`)
+}
+
+const openDelete = (id) => {
+  deleteId.value = id
+  deleteDialog.value = true
+}
+
+const deleteArticle = async () => {
+  loading.value = true
+  errorMsg.value = ''
+  const { error } = await supabase
+    .from('articles')
+    .delete()
+    .eq('id', deleteId.value)
+  if (error) errorMsg.value = error.message
+  deleteDialog.value = false
+  fetchArticles()
+  loading.value = false
+}
+
+onMounted(fetchArticles)
 </script>
 
 <template>
-  <div class="landing-page-wrapper">
-
-    <Navbar :active-id="activeSectionId" />
-
-    <!-- 👉 Hero Section -->
-    <HeroSection />
-
-    <!-- 👉 Latest Articles Section -->
-    <LatestArticlesSection />
-
-    <!-- 👉 Useful features  -->
-    <div :style="{ 'background-color': 'rgb(var(--v-theme-surface))' }">
-      <Features ref="refFeatures" />
+  <div class="p-6">
+    <div class="mb-8">
+      <VCard flat
+        class="py-6 px-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4 shadow-none border-b border-gray-200">
+        <div>
+          <h2 class="text-2xl font-bold mb-1">Articles Management</h2>
+          <p class="text-gray-500 text-base">
+            Manage all articles and their details for your website.
+          </p>
+        </div>
+        <VBtn color="primary" class="mt-4 md:mt-0" @click="openCreate" size="large" prepend-icon="tabler-plus">
+          Add Article
+        </VBtn>
+      </VCard>
     </div>
 
-    <!-- 👉 Customer Review -->
-    <div :style="{ 'background-color': 'rgb(var(--v-theme-surface))' }">
-      <CustomersReview />
-    </div>
+    <VAlert v-if="errorMsg" type="error" class="mb-4">
+      {{ errorMsg }}
+    </VAlert>
 
-    <!-- 👉 Our Team -->
-    <div :style="{ 'background-color': 'rgb(var(--v-theme-surface))' }">
-      <OurTeam ref="refTeam" />
-    </div>
+    <VDataTable :items="articleList" :loading="loading" class="rounded-lg shadow" :headers="[
+      { title: 'Type', key: 'type' },
+      { title: 'Title', key: 'title' },
+      { title: 'Published', key: 'published_at' },
+      { title: 'Created', key: 'created_at' },
+      { title: 'Actions', key: 'actions', sortable: false },
+    ]" item-value="id" density="comfortable">
+      <template #item.published_at="{ item }">
+        <span class="text-xs text-gray-700">{{ item.published_at }}</span>
+      </template>
+      <template #item.content="{ item }">
+        <ul class="list-disc pl-4">
+          <li v-for="(p, i) in item.content" :key="i" class="truncate max-w-xs">{{ p }}</li>
+        </ul>
+      </template>
+      <template #item.created_at="{ item }">
+        <span class="text-xs text-gray-500">{{ new Date(item.created_at).toLocaleString() }}</span>
+      </template>
+      <template #item.actions="{ item }">
+        <VBtn icon variant="text" color="primary" @click="openEdit(item)">
+          <VIcon icon="tabler-edit" />
+        </VBtn>
+        <VBtn icon variant="text" color="error" @click="openDelete(item.id)">
+          <VIcon icon="tabler-trash" />
+        </VBtn>
+      </template>
+      <template #no-data>
+        <div class="text-center text-gray-400 py-8">No data.</div>
+      </template>
+    </VDataTable>
 
-    <!-- 👉 FAQ Section -->
-    <div :style="{ 'background-color': 'rgb(var(--v-theme-surface))' }">
-      <FaqSection ref="refFaq" />
-    </div>
-
-    <!-- 👉 Contact Us  -->
-    <ContactUs ref="refContact" />
-
-
-    <!-- 👉 Footer -->
-    <Footer />
+    <!-- Delete Confirmation Dialog -->
+    <VDialog v-model="deleteDialog" max-width="400">
+      <VCard>
+        <VCardTitle>Delete Article?</VCardTitle>
+        <VCardText>
+          Are you sure you want to delete this article?
+        </VCardText>
+        <VCardActions>
+          <VSpacer />
+          <VBtn text @click="deleteDialog = false">Cancel</VBtn>
+          <VBtn color="error" :loading="loading" @click="deleteArticle">
+            Delete
+          </VBtn>
+        </VCardActions>
+      </VCard>
+    </VDialog>
   </div>
 </template>
-
-<style lang="scss">
-@media (max-width: 960px) and (min-width: 600px) {
-  .landing-page-wrapper {
-    .v-container {
-      padding-inline: 2rem !important;
-    }
-  }
-}
-</style>

@@ -38,7 +38,7 @@ const login = async () => {
     }
     localStorage.setItem('is_signed', 'true')
     // Optionally: persist session if remember is checked
-    router.push('/pages/admin')
+    router.push('/pages')
   } catch (e) {
     errorMsg.value = 'Login failed. Please try again.'
   }

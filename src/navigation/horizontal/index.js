@@ -5,27 +5,27 @@ export default [
     children: [
       {
         title: 'Pages',
-        to: { name: 'admin-pages' },
+        to: { name: 'pages' },
         icon: { icon: 'tabler-file-description' },
       },
       {
         title: 'Articles',
-        to: { name: 'admin' },
+        to: { path: '/' },
         icon: { icon: 'tabler-news' },
       },
       {
         title: 'Events',
-        to: { name: 'admin-calendar' },
+        to: { name: 'calendar' },
         icon: { icon: 'tabler-calendar-event' },
       },
       {
         title: 'Forms',
-        to: { name: 'admin-forms' },
+        to: { name: 'forms' },
         icon: { icon: 'tabler-forms' },
       },
       {
         title: 'Products',
-        to: { name: 'admin-products' },
+        to: { name: 'products' },
         icon: { icon: 'tabler-package' },
       },
     ],
@@ -36,12 +36,12 @@ export default [
     children: [
       {
         title: 'Team Members',
-        to: { name: 'admin-team-members' },
+        to: { name: 'team-members' },
         icon: { icon: 'tabler-users' },
       },
       {
         title: 'Users',
-        to: { name: 'admin-users' },
+        to: { name: 'users' },
         icon: { icon: 'tabler-users' },
       },
     ],
@@ -52,22 +52,22 @@ export default [
     children: [
       {
         title: 'Opinions',
-        to: { name: 'admin-opinions' },
+        to: { name: 'opinions' },
         icon: { icon: 'tabler-quote' },
       },
       {
         title: 'Testimonials',
-        to: { name: 'admin-testimonials' },
+        to: { name: 'testimonials' },
         icon: { icon: 'tabler-message' },
       },
       {
         title: 'Partners',
-        to: { name: 'admin-partners' },
+        to: { name: 'partners' },
         icon: { icon: 'tabler-heart-handshake' },
       },
       {
         title: 'FAQs',
-        to: { name: 'admin-faqs' },
+        to: { name: 'faqs' },
         icon: { icon: 'tabler-help' },
       },
     ],

@@ -1,17 +1,18 @@
 <script setup>
-import CalendarEventHandler from '@/views/apps/calendar/CalendarEventHandler.vue'
-import { blankEvent, useCalendar } from '@/views/apps/calendar/useCalendar'
-import NavBar from '@/views/front-pages/front-page-navbar.vue'
+import {
+  blankEvent,
+  useCalendar,
+} from '@/views/apps/calendar/useCalendar'
+import { useCalendarStore } from '@/views/apps/calendar/useCalendarStore'
 import FullCalendar from '@fullcalendar/vue3'
-import { ref, watch } from 'vue'
 
-definePage({
-  meta: {
-    layout: 'blank',
-    public: true,
-  },
-})
+// Components
+import CalendarEventHandler from '@/views/apps/calendar/CalendarEventHandler.vue'
 
+// 👉 Store
+const store = useCalendarStore()
+
+// 👉 Event
 const event = ref(structuredClone(blankEvent))
 const isEventHandlerSidebarActive = ref(false)
 
@@ -20,13 +21,12 @@ watch(isEventHandlerSidebarActive, val => {
     event.value = structuredClone(blankEvent)
 })
 
-const { refCalendar, calendarOptions: baseCalendarOptions, jumpToDate } = useCalendar(event, isEventHandlerSidebarActive)
+const { isLeftSidebarOpen } = useResponsiveLeftSidebar()
 
-// Clone and override calendarOptions to disable dateClick (no create), but allow eventClick
-const calendarOptions = {
-  ...baseCalendarOptions,
-  dateClick: undefined, // Disable creating event on date click
-}
+// 👉 useCalendar
+const { refCalendar, calendarOptions, addEvent, updateEvent, removeEvent, jumpToDate } = useCalendar(event, isEventHandlerSidebarActive, isLeftSidebarOpen)
+
+// SECTION Sidebar
 
 const jumpToDateFn = date => {
   jumpToDate(date)
@@ -34,19 +34,77 @@ const jumpToDateFn = date => {
 </script>
 
 <template>
-  <NavBar active-id="Kegiatan" />
-  <div class="mt-10">
-    <VContainer class="mt-10">
-      <VCard>
-        <VCardText>
-          <FullCalendar ref="refCalendar" :options="calendarOptions" />
-        </VCardText>
-      </VCard>
-      <CalendarEventHandler v-model:is-drawer-open="isEventHandlerSidebarActive" :event="event" />
-    </VContainer>
+  <div>
+    <VCard>
+      <!-- `z-index: 0` Allows overlapping vertical nav on calendar -->
+      <VLayout style="z-index: 0;">
+        <!-- 👉 Navigation drawer -->
+        <VNavigationDrawer v-model="isLeftSidebarOpen" data-allow-mismatch width="292" absolute touchless
+          location="start" class="calendar-add-event-drawer" :temporary="$vuetify.display.mdAndDown">
+          <div style="margin: 1.5rem;">
+            <VBtn block prepend-icon="tabler-plus" @click="isEventHandlerSidebarActive = true">
+              Add event
+            </VBtn>
+          </div>
+
+          <VDivider />
+
+          <div class="d-flex align-center justify-center pa-2">
+            <AppDateTimePicker id="calendar-date-picker" :model-value="new Date().toJSON().slice(0, 10)"
+              :config="{ inline: true }" class="calendar-date-picker" @update:model-value="jumpToDateFn" />
+          </div>
+
+          <VDivider />
+        </VNavigationDrawer>
+
+        <VMain>
+          <VCard flat>
+            <FullCalendar ref="refCalendar" :options="calendarOptions" />
+          </VCard>
+        </VMain>
+      </VLayout>
+    </VCard>
+    <CalendarEventHandler v-model:is-drawer-open="isEventHandlerSidebarActive" :event="event" @add-event="addEvent"
+      @update-event="updateEvent" @remove-event="removeEvent" />
   </div>
 </template>
 
 <style lang="scss">
 @use "@core/scss/template/libs/full-calendar";
+
+.calendar-add-event-drawer {
+  &.v-navigation-drawer:not(.v-navigation-drawer--temporary) {
+    border-end-start-radius: 0.375rem;
+    border-start-start-radius: 0.375rem;
+  }
+
+  &.v-navigation-drawer--temporary:not(.v-navigation-drawer--active) {
+    transform: translateX(-110%) !important;
+  }
+}
+
+.calendar-date-picker {
+  display: none;
+
+  +.flatpickr-input {
+    +.flatpickr-calendar.inline {
+      border: none;
+      box-shadow: none;
+
+      .flatpickr-months {
+        border-block-end: none;
+      }
+    }
+  }
+
+  &~.flatpickr-calendar .flatpickr-weekdays {
+    margin-block: 0 4px;
+  }
+}
+
+@media screen and (max-width: 1279px) {
+  .calendar-add-event-drawer {
+    border-width: 0;
+  }
+}
 </style>

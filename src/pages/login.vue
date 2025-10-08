@@ -51,7 +51,7 @@ const login = async () => {
     localStorage.setItem('user_name', form.value.username)
     console.log(localStorage.getItem('user_name'));
 
-    router.push('/admin/pages')
+    router.push('/pages')
   } catch (e) {
     errorMsg.value = 'Login failed. Please try again.'
   }
