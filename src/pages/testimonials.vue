@@ -125,7 +125,6 @@ onMounted(fetchTestimonials)
     </VAlert>
 
     <VDataTable :items="testimonialList" :loading="loading" class="rounded-lg shadow" :headers="[
-      { title: 'Text', key: 'text' },
       { title: 'Author', key: 'author' },
       { title: 'Location', key: 'location' },
       { title: 'Created', key: 'created_at' },

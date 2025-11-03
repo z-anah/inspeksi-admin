@@ -125,8 +125,6 @@ onMounted(fetchFaqs)
 
     <VDataTable :items="faqs" :loading="loading" class="rounded-lg shadow" :headers="[
       { title: 'Question', key: 'question' },
-      { title: 'Answer', key: 'answer' },
-      { title: 'Created', key: 'created_at' },
       { title: 'Actions', key: 'actions', sortable: false },
     ]" item-value="id" density="comfortable">
       <template #item.created_at="{ item }">

@@ -21,7 +21,6 @@
 
     <VDataTable :items="productList" :loading="loading" class="rounded-lg shadow" :headers="[
       { title: 'Name', key: 'name' },
-      { title: 'Description', key: 'description' },
       { title: 'Price', key: 'price' },
       { title: 'Stock', key: 'stock' },
       { title: 'Created', key: 'created_at' },

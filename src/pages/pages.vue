@@ -22,8 +22,6 @@
     <VDataTable :items="contentList" :loading="loading" class="rounded-lg shadow" :headers="[
       { title: 'Section', key: 'section' },
       { title: 'Key', key: 'key' },
-      { title: 'Value', key: 'value' },
-      { title: 'Updated', key: 'updated_at' },
       { title: 'Actions', key: 'actions', sortable: false },
     ]" item-value="id" density="comfortable">
       <template #item.updated_at="{ item }">

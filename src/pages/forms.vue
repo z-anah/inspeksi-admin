@@ -139,7 +139,6 @@ onMounted(fetchForms)
       { title: 'Icon', key: 'icon' },
       { title: 'Title', key: 'title' },
       { title: 'Link', key: 'link' },
-      { title: 'Description', key: 'description' },
       { title: 'Active', key: 'is_active' },
       { title: 'Created', key: 'created_at' },
       { title: 'Actions', key: 'actions', sortable: false },
