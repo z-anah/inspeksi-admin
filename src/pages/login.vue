@@ -12,7 +12,7 @@ definePage({
 })
 
 const form = ref({
-  username: '',
+  email: '',
   password: '',
   remember: false,
 })
@@ -26,35 +26,26 @@ const router = useRouter()
 const login = async () => {
   errorMsg.value = ''
   loading.value = true
+
   try {
-    // Query the users table directly for test-only authentication
-    const { data, error } = await supabase
-      .from('users')
-      .select('id, username, password')
-      .eq('username', form.value.username)
-      .single()
+    const { data, error } = await supabase.auth.signInWithPassword({
+      email: form.value.email,
+      password: form.value.password,
+    })
 
-    if (error || !data) {
-      errorMsg.value = 'Invalid username or password.'
+    if (error) {
+      errorMsg.value = error.message
       loading.value = false
       return
     }
 
-    // Simple plaintext password check (test only, do NOT use in production)
-    if (form.value.password !== data.password) {
-      errorMsg.value = 'Invalid username or password.'
-      loading.value = false
-      return
+    if (data.user) {
+      router.push('/pages')
     }
-
-    localStorage.setItem('is_signed', 'true')
-    localStorage.setItem('user_name', form.value.username)
-    console.log(localStorage.getItem('user_name'));
-
-    router.push('/pages')
   } catch (e) {
     errorMsg.value = 'Login failed. Please try again.'
   }
+
   loading.value = false
 }
 </script>
@@ -81,10 +72,9 @@ const login = async () => {
           </VAlert>
           <VForm @submit.prevent="login">
             <VRow>
-              <!-- username -->
+              <!-- email -->
               <VCol cols="12">
-                <AppTextField v-model="form.username" autofocus label="Username" type="text"
-                  placeholder="yourusername" />
+                <AppTextField v-model="form.email" autofocus label="Email" type="email" placeholder="your@email.com" />
               </VCol>
 
               <!-- password -->
@@ -94,9 +84,23 @@ const login = async () => {
                   :append-inner-icon="isPasswordVisible ? 'tabler-eye-off' : 'tabler-eye'"
                   @click:append-inner="isPasswordVisible = !isPasswordVisible" />
 
-                <VBtn block type="submit" :loading="loading" :disabled="loading" class="mt-6">
+                <div class="d-flex align-center flex-wrap justify-space-between mt-2 mb-4">
+                  <RouterLink :to="{ name: 'forgot-password' }" class="text-primary ms-2">
+                    Forgot Password?
+                  </RouterLink>
+                </div>
+
+                <VBtn block type="submit" :loading="loading" :disabled="loading">
                   Login
                 </VBtn>
+              </VCol>
+
+              <!-- create account -->
+              <VCol cols="12" class="text-center">
+                <span>New here?</span>
+                <RouterLink class="text-primary ms-2" :to="{ name: 'signup' }">
+                  Create an account
+                </RouterLink>
               </VCol>
             </VRow>
           </VForm>

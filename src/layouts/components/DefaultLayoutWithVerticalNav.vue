@@ -1,4 +1,5 @@
 <script setup>
+import { supabase } from '@/libs/supabase'
 import navItems from '@/navigation/vertical'
 import { themeConfig } from '@themeConfig'
 import { useRouter } from 'vue-router'
@@ -12,9 +13,8 @@ import { VerticalNavLayout } from '@layouts'
 
 const router = useRouter()
 
-const logout = () => {
-  localStorage.removeItem('is_signed')
-  // Remove other auth/session data if needed
+const logout = async () => {
+  await supabase.auth.signOut()
   router.push({ name: 'login' })
 }
 </script>

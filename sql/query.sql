@@ -88,6 +88,7 @@ CREATE TABLE public.team_members (
   position text NOT NULL,
   image_url text,
   created_at timestamp with time zone DEFAULT now(),
+  order_index integer DEFAULT 0,
   CONSTRAINT team_members_pkey PRIMARY KEY (id)
 );
 CREATE TABLE public.testimonials (
@@ -97,11 +98,4 @@ CREATE TABLE public.testimonials (
   location text,
   created_at timestamp with time zone DEFAULT now(),
   CONSTRAINT testimonials_pkey PRIMARY KEY (id)
-);
-CREATE TABLE public.users (
-  id uuid NOT NULL DEFAULT gen_random_uuid(),
-  username text NOT NULL UNIQUE,
-  password text NOT NULL,
-  created_at timestamp without time zone DEFAULT now(),
-  CONSTRAINT users_pkey PRIMARY KEY (id)
 );

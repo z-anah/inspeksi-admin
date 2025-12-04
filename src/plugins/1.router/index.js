@@ -1,3 +1,4 @@
+import { supabase } from '@/libs/supabase'
 import { setupLayouts } from 'virtual:generated-layouts'
 import { createRouter, createWebHistory } from 'vue-router/auto'
 
@@ -25,18 +26,19 @@ const router = createRouter({
   ],
 })
 
-router.beforeEach((to, from, next) => {
-  const isSigned = localStorage.getItem('is_signed') === 'true';
+router.beforeEach(async (to, from, next) => {
+  const { data: { session } } = await supabase.auth.getSession()
+  const isAuthenticated = !!session
 
-  if (to.name === 'login' && isSigned) {
-    return next({ name: 'admin' });
+  if (to.name === 'login' && isAuthenticated) {
+    return next({ name: 'pages' })
   }
 
-  if (!to.meta.public && !isSigned) {
-    return next({ name: 'login' });
+  if (!to.meta.public && !isAuthenticated) {
+    return next({ name: 'login' })
   }
 
-  next();
+  next()
 })
 
 export { router }

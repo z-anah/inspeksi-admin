@@ -1,6 +1,7 @@
 <script setup>
 import { supabase } from '@/libs/supabase'
 import { onMounted, reactive, ref } from 'vue'
+import draggable from 'vuedraggable'
 
 definePage({
   meta: {
@@ -19,6 +20,8 @@ const form = reactive({
   name: '',
   position: '',
   image_url: '',
+  order_index: 0,
+  section: '', // Added section
 })
 const deleteId = ref(null)
 const imageUploading = ref(false)
@@ -30,7 +33,7 @@ const fetchTeamMembers = async () => {
   const { data, error } = await supabase
     .from('team_members')
     .select('*')
-    .order('created_at', { ascending: false })
+    .order('order_index', { ascending: true })
   if (error) errorMsg.value = error.message
   else teamMembers.value = data
   loading.value = false
@@ -38,7 +41,7 @@ const fetchTeamMembers = async () => {
 
 const openCreate = () => {
   isEdit.value = false
-  Object.assign(form, { id: null, name: '', position: '', image_url: '' })
+  Object.assign(form, { id: null, name: '', position: '', image_url: '', order_index: teamMembers.value.length, section: '' }) // Add section
   dialog.value = true
   errorMsg.value = ''
 }
@@ -65,6 +68,8 @@ const saveTeamMember = async () => {
         name: form.name,
         position: form.position,
         image_url: form.image_url,
+        order_index: form.order_index,
+        section: form.section, // Add section
       })
       .eq('id', form.id)
       .select()
@@ -75,6 +80,8 @@ const saveTeamMember = async () => {
         name: form.name,
         position: form.position,
         image_url: form.image_url,
+        order_index: form.order_index,
+        section: form.section, // Add section
       }])
       .select()
   }
@@ -126,6 +133,37 @@ const handleImageUpload = async (event) => {
   imageUploading.value = false
 }
 
+const updateOrderIndexes = async () => {
+  loading.value = true
+  errorMsg.value = ''
+  try {
+    const updates = teamMembers.value.map((member, index) => ({
+      id: member.id,
+      order_index: index,
+    }))
+
+    for (const update of updates) {
+      const { error } = await supabase
+        .from('team_members')
+        .update({ order_index: update.order_index })
+        .eq('id', update.id)
+      if (error) throw error
+    }
+  } catch (err) {
+    errorMsg.value = err.message || 'Failed to update order'
+    await fetchTeamMembers() // Revert on error
+  }
+  loading.value = false
+}
+
+const onDragEnd = () => {
+  // Update local order_index after drag-and-drop
+  teamMembers.value.forEach((member, idx) => {
+    member.order_index = idx
+  })
+  updateOrderIndexes()
+}
+
 onMounted(fetchTeamMembers)
 </script>
 
@@ -144,39 +182,63 @@ onMounted(fetchTeamMembers)
           Add Team Member
         </VBtn>
       </VCard>
+      <VProgressLinear v-if="loading" indeterminate color="primary" />
     </div>
 
     <VAlert v-if="errorMsg" type="error" class="mb-4">
       {{ errorMsg }}
     </VAlert>
 
-    <VDataTable :items="teamMembers" :loading="loading" class="rounded-lg shadow" :headers="[
-      { title: 'Name', key: 'name' },
-      { title: 'Position', key: 'position' },
-      { title: 'Image', key: 'image_url' },
-      { title: 'Created', key: 'created_at' },
-      { title: 'Actions', key: 'actions', sortable: false },
-    ]" item-value="id" density="comfortable">
-      <template #item.image_url="{ item }">
-        <img v-if="item.image_url" :src="item.image_url" alt="team member"
-          style="height:48px;max-width:80px;object-fit:cover;border-radius:8px;" />
-        <span v-else class="text-gray-400">-</span>
-      </template>
-      <template #item.created_at="{ item }">
-        <span class="text-xs text-gray-500">{{ new Date(item.created_at).toLocaleString() }}</span>
-      </template>
-      <template #item.actions="{ item }">
-        <VBtn icon variant="text" color="primary" @click="openEdit(item)">
-          <VIcon icon="tabler-edit" />
-        </VBtn>
-        <VBtn icon variant="text" color="error" @click="openDelete(item.id)">
-          <VIcon icon="tabler-trash" />
-        </VBtn>
-      </template>
-      <template #no-data>
-        <div class="text-center text-gray-400 py-8">No data.</div>
-      </template>
-    </VDataTable>
+    <div class="overflow-x-auto">
+      <table class="w-full">
+        <thead class="bg-gray-50">
+          <tr>
+            <th class="px-6 text-left text-sm font-semibold text-gray-700">Range</th>
+            <th class="px-6 text-left text-sm font-semibold text-gray-700">Section</th>
+            <th class="px-6 text-left text-sm font-semibold text-gray-700">Name</th>
+            <th class="px-6 text-left text-sm font-semibold text-gray-700">Position</th>
+            <th class="px-6 text-left text-sm font-semibold text-gray-700">Image</th>
+            <th class="px-6 text-left text-sm font-semibold text-gray-700">Actions</th>
+            <th class="px-6 text-left text-sm font-semibold text-gray-700" style="width: 40px;"></th>
+          </tr>
+        </thead>
+        <draggable v-model="teamMembers" tag="tbody" item-key="id" @end="onDragEnd" handle=".drag-handle"
+          :disabled="loading">
+          <template #item="{ element: item }">
+            <tr class="border-b hover:bg-gray-100 hover:shadow rounded-lg transition-all duration-150 cursor-move">
+              <td class="px-6 align-middle text-align-right">
+                <span class="text-xs text-gray-500">{{ item.order_index + 1 }}</span>
+              </td>
+              <td class="px-6 align-middle text-sm">{{ item.section }}</td>
+              <td class="px-6 align-middle text-sm">{{ item.name }}</td>
+              <td class="px-6 align-middle text-sm">{{ item.position }}</td>
+              <td class="px-6 align-middle text-center">
+                <img v-if="item.image_url" :src="item.image_url" alt="team member"
+                  style="height:48px;max-width:80px;object-fit:cover;border-radius:8px;" />
+                <span v-else class="text-gray-400 text-sm">-</span>
+              </td>
+              <td class="px-6 align-middle">
+                <VBtn icon variant="text" color="primary" size="small" @click="openEdit(item)">
+                  <VIcon icon="tabler-edit" />
+                </VBtn>
+                <VBtn icon variant="text" color="error" size="small" @click="openDelete(item.id)">
+                  <VIcon icon="tabler-trash" />
+                </VBtn>
+              </td>
+              <td class="px-6 align-middle">
+                <VIcon icon="tabler-grip-vertical"
+                  class="drag-handle text-gray-400 cursor-grab active:cursor-grabbing" />
+              </td>
+            </tr>
+          </template>
+        </draggable>
+        <tbody v-if="!teamMembers.length && !loading">
+          <tr>
+            <td colspan="6" class="text-center text-gray-400 py-12">No data.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
 
     <!-- Create/Edit Dialog -->
     <VDialog v-model="dialog" max-width="500">
@@ -188,6 +250,7 @@ onMounted(fetchTeamMembers)
           <VForm @submit.prevent="saveTeamMember">
             <VTextField v-model="form.name" label="Name" required class="mb-4" />
             <VTextField v-model="form.position" label="Position" required class="mb-4" />
+            <VTextField v-model="form.section" label="Section" class="mb-4" /> <!-- Add section input -->
             <!-- Image upload section -->
             <div class="mb-4">
               <label class="block font-medium mb-1">Image</label>
@@ -229,3 +292,9 @@ onMounted(fetchTeamMembers)
     </VDialog>
   </div>
 </template>
+
+<style scoped>
+table tr {
+  border-radius: 12px;
+}
+</style>

@@ -24,14 +24,17 @@ declare module 'vue-router/auto-routes' {
     'articles-edit-hehe': RouteRecordInfo<'articles-edit-hehe', '/articles/edit/hehe', Record<never, never>, Record<never, never>>,
     'calendar': RouteRecordInfo<'calendar', '/calendar', Record<never, never>, Record<never, never>>,
     'faqs': RouteRecordInfo<'faqs', '/faqs', Record<never, never>, Record<never, never>>,
+    'forgot-password': RouteRecordInfo<'forgot-password', '/forgot-password', Record<never, never>, Record<never, never>>,
     'forms': RouteRecordInfo<'forms', '/forms', Record<never, never>, Record<never, never>>,
     'login': RouteRecordInfo<'login', '/login', Record<never, never>, Record<never, never>>,
     'opinions': RouteRecordInfo<'opinions', '/opinions', Record<never, never>, Record<never, never>>,
     'pages': RouteRecordInfo<'pages', '/pages', Record<never, never>, Record<never, never>>,
     'partners': RouteRecordInfo<'partners', '/partners', Record<never, never>, Record<never, never>>,
     'products': RouteRecordInfo<'products', '/products', Record<never, never>, Record<never, never>>,
+    'profile': RouteRecordInfo<'profile', '/profile', Record<never, never>, Record<never, never>>,
+    'reset-password': RouteRecordInfo<'reset-password', '/reset-password', Record<never, never>, Record<never, never>>,
+    'signup': RouteRecordInfo<'signup', '/signup', Record<never, never>, Record<never, never>>,
     'team-members': RouteRecordInfo<'team-members', '/team-members', Record<never, never>, Record<never, never>>,
     'testimonials': RouteRecordInfo<'testimonials', '/testimonials', Record<never, never>, Record<never, never>>,
-    'users': RouteRecordInfo<'users', '/users', Record<never, never>, Record<never, never>>,
   }
 }

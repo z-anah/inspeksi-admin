@@ -4,10 +4,16 @@ import avatar1 from '@images/avatars/avatar-1.png'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
+const user = ref(null)
+
+onMounted(async () => {
+  const { data: { user: currentUser } } = await supabase.auth.getUser()
+  user.value = currentUser
+})
+
 const logout = async () => {
   await supabase.auth.signOut()
-  localStorage.removeItem('is_signed')
-  router.push('/login')
+  router.push({ name: 'login' })
 }
 </script>
 
@@ -32,7 +38,7 @@ const logout = async () => {
             </template>
 
             <VListItemTitle class="font-weight-semibold">
-              John Doe
+              {{ user?.email || 'User' }}
             </VListItemTitle>
             <VListItemSubtitle>Admin</VListItemSubtitle>
           </VListItem>
@@ -40,7 +46,7 @@ const logout = async () => {
           <VDivider class="my-2" />
 
           <!-- 👉 Profile -->
-          <VListItem link>
+          <VListItem link :to="{ name: 'profile' }">
             <template #prepend>
               <VIcon class="me-2" icon="tabler-user" size="22" />
             </template>

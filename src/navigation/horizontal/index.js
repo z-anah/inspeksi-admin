@@ -39,11 +39,6 @@ export default [
         to: { name: 'team-members' },
         icon: { icon: 'tabler-users' },
       },
-      {
-        title: 'Users',
-        to: { name: 'users' },
-        icon: { icon: 'tabler-users' },
-      },
     ],
   },
   {
